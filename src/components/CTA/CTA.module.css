@@ -1,0 +1,188 @@
+.wrapper {
+  width: 100%;
+
+  padding: 120px 6%;
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+.box {
+  position: relative;
+  z-index: 2;
+
+  padding: 100px 60px;
+
+  border-radius: 42px;
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.06),
+      rgba(255,255,255,0.03)
+    );
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter: blur(24px);
+}
+
+.box p {
+  color: #c084fc;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  letter-spacing: 2px;
+
+  margin-bottom: 22px;
+}
+
+.box h2 {
+  font-family: 'Space Grotesk', sans-serif;
+
+  font-size: 72px;
+  line-height: 1;
+
+  margin-bottom: 28px;
+}
+
+.box h2 span {
+  background: linear-gradient(
+    135deg,
+    #d8b4fe,
+    #9333ea
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.box h3 {
+  max-width: 760px;
+
+  margin: auto;
+
+  color: #9f9bad;
+
+  font-size: 18px;
+  line-height: 1.8;
+
+  margin-bottom: 46px;
+
+  font-weight: 400;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+
+  gap: 18px;
+}
+
+.primary {
+  background: linear-gradient(
+    135deg,
+    #9333ea,
+    #6d28d9
+  );
+
+  color: white;
+
+  padding: 18px 34px;
+
+  border-radius: 18px;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  box-shadow:
+    0 10px 40px rgba(147,51,234,0.35);
+
+  transition: 0.35s ease;
+}
+
+.primary:hover {
+  transform: translateY(-5px);
+}
+
+.secondary {
+  background: rgba(255,255,255,0.04);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  color: white;
+
+  padding: 18px 34px;
+
+  border-radius: 18px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  transition: 0.3s;
+}
+
+.secondary:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.blur {
+  position: absolute;
+
+  width: 500px;
+  height: 500px;
+
+  background: rgba(147,51,234,0.2);
+
+  border-radius: 999px;
+
+  filter: blur(120px);
+
+  top: 0;
+  left: 50%;
+
+  transform: translateX(-50%);
+}
+
+@media (max-width: 900px) {
+  .box h2 {
+    font-size: 52px;
+  }
+}
+
+@media (max-width: 700px) {
+  .wrapper {
+    padding: 90px 20px;
+  }
+
+  .box {
+    padding: 70px 30px;
+  }
+
+  .box h2 {
+    font-size: 40px;
+  }
+
+  .box h3 {
+    font-size: 16px;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  .primary,
+  .secondary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 450px) {
+  .box h2 {
+    font-size: 32px;
+  }
+}

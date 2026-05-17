@@ -1,0 +1,193 @@
+.features {
+  width: 100%;
+
+  padding: 120px 6%;
+
+  position: relative;
+}
+
+.top {
+  text-align: center;
+
+  margin-bottom: 70px;
+}
+
+.top p {
+  color: #c084fc;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  letter-spacing: 2px;
+
+  margin-bottom: 18px;
+}
+
+.top h2 {
+  font-family: 'Space Grotesk', sans-serif;
+
+  font-size: 58px;
+  line-height: 1.1;
+
+  margin-bottom: 24px;
+}
+
+.top h2 span {
+  background: linear-gradient(
+    135deg,
+    #d8b4fe,
+    #9333ea
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.top h3 {
+  max-width: 700px;
+
+  margin: auto;
+
+  color: #a5a1b2;
+
+  font-size: 18px;
+  line-height: 1.7;
+
+  font-weight: 400;
+}
+
+.grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(320px, 1fr));
+
+  gap: 28px;
+}
+
+.card {
+  padding: 38px;
+
+  border-radius: 32px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.05),
+      rgba(255,255,255,0.02)
+    );
+
+  border: 1px solid rgba(255,255,255,0.06);
+
+  backdrop-filter: blur(18px);
+
+  transition: 0.35s ease;
+
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+
+  position: absolute;
+
+  width: 180px;
+  height: 180px;
+
+  background: rgba(147, 51, 234, 0.15);
+
+  border-radius: 999px;
+
+  top: -60px;
+  right: -60px;
+
+  filter: blur(50px);
+}
+
+.card:hover {
+  transform: translateY(-10px);
+
+  border-color: rgba(192, 132, 252, 0.4);
+}
+
+.icon {
+  width: 72px;
+  height: 72px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 22px;
+
+  margin-bottom: 28px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(147, 51, 234, 0.25),
+      rgba(168, 85, 247, 0.08)
+    );
+
+  color: #d8b4fe;
+
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.card h4 {
+  font-size: 26px;
+  font-weight: 700;
+
+  margin-bottom: 16px;
+}
+
+.card p {
+  color: #9e99ad;
+
+  line-height: 1.8;
+
+  font-size: 16px;
+}
+
+@media (max-width: 900px) {
+  .top h2 {
+    font-size: 46px;
+  }
+}
+
+@media (max-width: 700px) {
+  .features {
+    padding: 90px 20px;
+  }
+
+  .top h2 {
+    font-size: 38px;
+  }
+
+  .top h3 {
+    font-size: 16px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 32px;
+  }
+}
+
+@media (max-width: 450px) {
+  .top h2 {
+    font-size: 32px;
+  }
+
+  .card h4 {
+    font-size: 22px;
+  }
+
+  .card p {
+    font-size: 15px;
+  }
+}

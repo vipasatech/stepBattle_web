@@ -1,0 +1,170 @@
+.navbar {
+  width: 100%;
+  height: 90px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 6%;
+
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+
+  backdrop-filter: blur(14px);
+
+  background: rgba(8, 4, 18, 0.55);
+
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.left img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.left h1 {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.desktopLinks {
+  display: flex;
+  gap: 40px;
+
+  color: #d8d8d8;
+  font-size: 15px;
+}
+
+.desktopLinks a {
+  transition: 0.3s;
+}
+
+.desktopLinks a:hover {
+  color: #bb86fc;
+}
+
+.desktopButton {
+  background: linear-gradient(
+    135deg,
+    #9333ea,
+    #7e22ce
+  );
+
+  color: white;
+
+  padding: 14px 24px;
+
+  border-radius: 999px;
+
+  font-weight: 700;
+
+  transition: 0.3s ease;
+
+  box-shadow:
+    0 0 30px rgba(147, 51, 234, 0.4);
+}
+
+.desktopButton:hover {
+  transform: scale(1.05);
+}
+
+.mobileMenu {
+  display: none;
+  cursor: pointer;
+}
+
+.mobileDrawer {
+  position: fixed;
+  top: 90px;
+  right: -100%;
+
+  width: 280px;
+  height: calc(100vh - 90px);
+
+  background: rgba(10, 5, 20, 0.98);
+
+  backdrop-filter: blur(20px);
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 40px 30px;
+
+  gap: 30px;
+
+  transition: 0.4s ease;
+
+  z-index: 999;
+}
+
+.mobileDrawer a {
+  font-size: 18px;
+  color: white;
+}
+
+.mobileDrawer button {
+  margin-top: 20px;
+
+  background: linear-gradient(
+    135deg,
+    #9333ea,
+    #7e22ce
+  );
+
+  color: white;
+
+  padding: 14px;
+  border-radius: 999px;
+
+  font-weight: 700;
+}
+
+.showDrawer {
+  right: 0;
+}
+
+@media (max-width: 900px) {
+  .desktopLinks,
+  .desktopButton {
+    display: none;
+  }
+
+  .mobileMenu {
+    display: block;
+  }
+
+  .left h1 {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    height: 80px;
+    padding: 0 20px;
+  }
+
+  .left img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .left h1 {
+    font-size: 18px;
+  }
+
+  .mobileDrawer {
+    top: 80px;
+    height: calc(100vh - 80px);
+  }
+}

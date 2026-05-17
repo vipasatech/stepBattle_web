@@ -1,0 +1,333 @@
+.hero {
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 80px;
+
+  padding: 140px 6% 80px;
+
+  position: relative;
+  overflow: hidden;
+}
+
+.left {
+  flex: 1;
+  z-index: 2;
+}
+
+.tag {
+  display: inline-block;
+
+  padding: 10px 18px;
+
+  border-radius: 999px;
+
+  background: rgba(255,255,255,0.05);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  color: #d8b4fe;
+
+  margin-bottom: 28px;
+
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+
+  backdrop-filter: blur(12px);
+}
+
+.left h1 {
+  font-family: 'Space Grotesk', sans-serif;
+
+  font-size: 88px;
+  line-height: 0.95;
+
+  font-weight: 700;
+
+  letter-spacing: -4px;
+
+  margin-bottom: 28px;
+
+  max-width: 700px;
+}
+
+.left h1 span {
+  background: linear-gradient(
+    135deg,
+    #d8b4fe,
+    #9333ea
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.description {
+  max-width: 580px;
+
+  color: #a4a1b2;
+
+  font-size: 18px;
+  line-height: 1.8;
+
+  margin-bottom: 45px;
+}
+
+.buttons {
+  display: flex;
+  gap: 18px;
+
+  margin-bottom: 55px;
+}
+
+.primary {
+  background: linear-gradient(
+    135deg,
+    #9333ea,
+    #6d28d9
+  );
+
+  color: white;
+
+  padding: 18px 34px;
+
+  border-radius: 18px;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  box-shadow:
+    0 10px 40px rgba(147, 51, 234, 0.35);
+
+  transition: 0.35s ease;
+}
+
+.primary:hover {
+  transform: translateY(-5px);
+}
+
+.secondary {
+  background: rgba(255,255,255,0.04);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  color: white;
+
+  padding: 18px 34px;
+
+  border-radius: 18px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  backdrop-filter: blur(10px);
+
+  transition: 0.3s;
+}
+
+.secondary:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.card {
+  min-width: 170px;
+
+  padding: 26px;
+
+  border-radius: 28px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.06),
+      rgba(255,255,255,0.02)
+    );
+
+  border: 1px solid rgba(255,255,255,0.05);
+
+  backdrop-filter: blur(20px);
+
+  transition: 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+}
+
+.card h2 {
+  font-size: 34px;
+  font-weight: 800;
+
+  margin-bottom: 10px;
+}
+
+.card p {
+  color: #9d99aa;
+  font-size: 15px;
+}
+
+.right {
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: relative;
+  z-index: 2;
+}
+
+.phone {
+  width: 390px;
+
+  border-radius: 42px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  background: rgba(255,255,255,0.03);
+
+  box-shadow:
+    0 0 100px rgba(147, 51, 234, 0.35);
+
+  position: relative;
+}
+
+.phone img {
+  width: 100%;
+  display: block;
+}
+
+.blur1,
+.blur2 {
+  position: absolute;
+
+  border-radius: 999px;
+  filter: blur(120px);
+
+  z-index: 0;
+}
+
+.blur1 {
+  width: 420px;
+  height: 420px;
+
+  background: rgba(147, 51, 234, 0.22);
+
+  top: -120px;
+  left: -120px;
+}
+
+.blur2 {
+  width: 320px;
+  height: 320px;
+
+  background: rgba(168, 85, 247, 0.18);
+
+  bottom: 0;
+  right: 0;
+}
+
+@media (max-width: 1200px) {
+  .left h1 {
+    font-size: 72px;
+  }
+
+  .phone {
+    width: 340px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+
+    padding-top: 140px;
+
+    gap: 90px;
+  }
+
+  .description {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 45px;
+  }
+
+  .buttons {
+    justify-content: center;
+  }
+
+  .stats {
+    justify-content: center;
+  }
+
+  .left h1 {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero {
+    padding: 120px 20px 70px;
+  }
+
+  .left h1 {
+    font-size: 52px;
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+
+  .description {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  .primary,
+  .secondary {
+    width: 100%;
+  }
+
+  .phone {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 450px) {
+  .left h1 {
+    font-size: 42px;
+  }
+
+  .tag {
+    font-size: 11px;
+  }
+
+  .description {
+    font-size: 15px;
+  }
+
+  .card h2 {
+    font-size: 28px;
+  }
+}

@@ -1,0 +1,47 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  background: #07010f;
+  color: white;
+
+  font-family: 'Inter', sans-serif;
+
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at top, rgba(128, 0, 255, 0.25), transparent 40%),
+    #07010f;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+}
+
+::selection {
+  background: #9333ea;
+  color: white;
+}
+
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: auto;
+  padding: 0 24px;
+}
