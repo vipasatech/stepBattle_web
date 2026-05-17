@@ -6,9 +6,9 @@
   align-items: center;
   justify-content: space-between;
 
-  gap: 80px;
+  gap: 70px;
 
-  padding: 140px 6% 80px;
+  padding: 100px 6% 60px;
 
   position: relative;
   overflow: hidden;
@@ -16,11 +16,18 @@
 
 .left {
   flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
   z-index: 2;
 }
 
 .tag {
   display: inline-block;
+
+  width: fit-content;
 
   padding: 10px 18px;
 
@@ -32,7 +39,7 @@
 
   color: #d8b4fe;
 
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 
   font-size: 13px;
   font-weight: 600;
@@ -44,16 +51,16 @@
 .left h1 {
   font-family: 'Space Grotesk', sans-serif;
 
-  font-size: 88px;
+  font-size: 82px;
   line-height: 0.95;
 
   font-weight: 700;
 
   letter-spacing: -4px;
 
-  margin-bottom: 28px;
+  margin-bottom: 26px;
 
-  max-width: 700px;
+  max-width: 620px;
 }
 
 .left h1 span {
@@ -75,14 +82,14 @@
   font-size: 18px;
   line-height: 1.8;
 
-  margin-bottom: 45px;
+  margin-bottom: 42px;
 }
 
 .buttons {
   display: flex;
   gap: 18px;
 
-  margin-bottom: 55px;
+  margin-bottom: 42px;
 }
 
 .primary {
@@ -185,13 +192,15 @@
   align-items: center;
 
   position: relative;
+
   z-index: 2;
 }
 
 .phone {
-  width: 390px;
+  width: 100%;
+  max-width: 760px;
 
-  border-radius: 42px;
+  border-radius: 32px;
 
   overflow: hidden;
 
@@ -200,7 +209,7 @@
   background: rgba(255,255,255,0.03);
 
   box-shadow:
-    0 0 100px rgba(147, 51, 234, 0.35);
+    0 0 100px rgba(147, 51, 234, 0.2);
 
   position: relative;
 }
@@ -240,30 +249,47 @@
   right: 0;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1300px) {
+  .hero {
+    gap: 50px;
+  }
+
   .left h1 {
-    font-size: 72px;
+    font-size: 70px;
   }
 
   .phone {
-    width: 340px;
+    max-width: 640px;
   }
 }
 
 @media (max-width: 1100px) {
   .hero {
     flex-direction: column;
+
     text-align: center;
 
-    padding-top: 140px;
+    padding: 120px 6% 80px;
 
-    gap: 90px;
+    gap: 70px;
+  }
+
+  .left {
+    align-items: center;
+  }
+
+  .tag {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .left h1 {
+    max-width: 100%;
   }
 
   .description {
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 45px;
   }
 
   .buttons {
@@ -274,14 +300,14 @@
     justify-content: center;
   }
 
-  .left h1 {
-    max-width: 100%;
+  .phone {
+    max-width: 720px;
   }
 }
 
 @media (max-width: 700px) {
   .hero {
-    padding: 120px 20px 70px;
+    padding: 110px 20px 60px;
   }
 
   .left h1 {
@@ -297,6 +323,8 @@
 
   .buttons {
     flex-direction: column;
+
+    width: 100%;
   }
 
   .primary,
@@ -306,7 +334,11 @@
 
   .phone {
     width: 100%;
-    max-width: 320px;
+    max-width: 100%;
+  }
+
+  .stats {
+    width: 100%;
   }
 
   .card {
@@ -329,5 +361,9 @@
 
   .card h2 {
     font-size: 28px;
+  }
+
+  .buttons {
+    gap: 14px;
   }
 }

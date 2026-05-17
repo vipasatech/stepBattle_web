@@ -1,7 +1,7 @@
 import styles from "./Hero.module.css";
 import { motion } from "framer-motion";
 
-export default function Hero() {
+export default function Hero({ setModal }) {
   return (
     <section className={styles.hero}>
       <div className={styles.blur1}></div>
@@ -41,13 +41,18 @@ export default function Hero() {
         </motion.p>
 
         <div className={styles.buttons}>
-          <button className={styles.primary}>
+          <button
+            className={styles.primary}
+            onClick={() => setModal(true)}
+          >
             Join Waitlist
           </button>
 
-          <button className={styles.secondary}>
-            Explore Features
-          </button>
+          <a href="#features">
+            <button className={styles.secondary}>
+              Explore Features
+            </button>
+          </a>
         </div>
 
         <div className={styles.stats}>
@@ -76,8 +81,8 @@ export default function Hero() {
       >
         <div className={styles.phone}>
           <img
-            src="/app-ui.png"
-            alt="app preview"
+            src="/hero-preview.png"
+            alt="STEP-BATTLE app preview"
           />
         </div>
       </motion.div>

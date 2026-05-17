@@ -2,25 +2,16 @@ import styles from "./Navbar.module.css";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
-import WaitlistModal from "../WaitlistModal/WaitlistModal";
-
-export default function Navbar() {
+export default function Navbar({ setModal }) {
   const [open, setOpen] = useState(false);
-
-  const [modal, setModal] = useState(false);
 
   return (
     <>
-      <WaitlistModal
-        open={modal}
-        setOpen={setModal}
-      />
-
       <nav className={styles.navbar}>
-        <div className={styles.left}>
-          <img src="/logo.png" alt="logo" />
-          <h1>STEP-BATTLE</h1>
-        </div>
+       <a href="#" className={styles.left}>
+  <img src="/logo.png" alt="logo" />
+  <h1>STEP-BATTLE</h1>
+</a>
 
         <div className={styles.desktopLinks}>
           <a href="#features">Features</a>
@@ -50,11 +41,19 @@ export default function Navbar() {
         }`}
       >
         <a href="#features">Features</a>
+
         <a href="#how">How It Works</a>
+
         <a href="#leaderboard">Leaderboard</a>
+
         <a href="#about">About</a>
 
-        <button onClick={() => setModal(true)}>
+        <button
+          onClick={() => {
+            setModal(true);
+            setOpen(false);
+          }}
+        >
           Join Waitlist
         </button>
       </div>

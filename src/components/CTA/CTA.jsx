@@ -1,6 +1,6 @@
 import styles from "./CTA.module.css";
 
-export default function CTA() {
+export default function CTA({ setModal }) {
   return (
     <section className={styles.wrapper}>
       <div className={styles.blur}></div>
@@ -21,20 +21,23 @@ export default function CTA() {
         </h3>
 
         <div className={styles.buttons}>
-          <button className={styles.primary}>
+          <button
+            className={styles.primary}
+            onClick={() => setModal(true)}
+          >
             Join Waitlist
           </button>
 
-         <button
-  className={styles.secondary}
-  onClick={() =>
-    alert(
-      "App launching soon 🚀 Currently in development."
-    )
-  }
->
-  Download App
-</button>
+          <button
+            className={styles.secondary}
+            onClick={() =>
+              alert(
+                "App launching soon 🚀 Currently in development."
+              )
+            }
+          >
+            Download App
+          </button>
         </div>
       </div>
     </section>

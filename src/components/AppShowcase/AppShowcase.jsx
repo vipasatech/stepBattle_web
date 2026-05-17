@@ -51,7 +51,7 @@ export default function AppShowcase() {
         <div className={styles.blur}></div>
 
         <div className={styles.phoneMain}>
-          <img src="/app-ui.png" alt="main ui" />
+          <img src="/leaderboard.png" alt="main ui" />
         </div>
 
         <div className={styles.cardTop}>

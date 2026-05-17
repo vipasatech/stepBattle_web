@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import Navbar from "../components/Navbar/Navbar";
 import Hero from "../components/Hero/Hero";
 import Features from "../components/Features/Features";
@@ -7,16 +9,32 @@ import Testimonials from "../components/Testimonials/Testimonials";
 import CTA from "../components/CTA/CTA";
 import Footer from "../components/Footer/Footer";
 
+import WaitlistModal from "../components/WaitlistModal/WaitlistModal";
+
 export default function Home() {
+  const [modal, setModal] = useState(false);
+
   return (
     <>
-      <Navbar />
-      <Hero />
+      <WaitlistModal
+        open={modal}
+        setOpen={setModal}
+      />
+
+      <Navbar setModal={setModal} />
+
+      <Hero setModal={setModal} />
+
       <Features />
+
       <HowItWorks />
+
       <AppShowcase />
+
       <Testimonials />
-      <CTA />
+
+      <CTA setModal={setModal} />
+
       <Footer />
     </>
   );
