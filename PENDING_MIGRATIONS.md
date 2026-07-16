@@ -69,7 +69,42 @@ comment on column public.subscription_orders.refund_id is
   'Razorpay refund entity id (rfnd_XXXX). Null unless refunded.';
 ```
 
-### Chunk 4 — helper view
+### Chunk 4 — missions extras + mission-posters storage bucket
+
+Idempotent — safe if these columns / bucket already exist. The
+mobile app already reads `should_show_in_home`, `poster_url`,
+`display_order` from missions rows; the admin panel writes them.
+
+```sql
+alter table public.missions
+  add column if not exists should_show_in_home boolean not null default false,
+  add column if not exists poster_url          text,
+  add column if not exists display_order       integer not null default 100;
+
+create index if not exists missions_display_order_idx
+  on public.missions (display_order desc);
+```
+
+Public storage bucket for admin-uploaded mission posters. Reads are
+public (bucket is public), writes go through the /api/admin-mission-poster-upload
+endpoint using the service_role client — so no INSERT/UPDATE policies
+are needed here.
+
+```sql
+insert into storage.buckets (id, name, public)
+values ('mission-posters', 'mission-posters', true)
+on conflict (id) do nothing;
+
+-- Explicit read policy in case the storage.objects table has RLS on
+-- but public buckets aren't honored (defensive; noop on modern Supabase).
+drop policy if exists "mission-posters public read"
+  on storage.objects;
+create policy "mission-posters public read"
+  on storage.objects for select
+  using (bucket_id = 'mission-posters');
+```
+
+### Chunk 5 — helper view
 
 Denormalized view the Activity Log tab reads from directly. Joins
 in the admin's + target user's email/name so the client doesn't

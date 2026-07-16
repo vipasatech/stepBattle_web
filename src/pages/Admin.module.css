@@ -677,3 +677,160 @@
   transition: opacity 120ms;
 }
 .modalPrimary:disabled { opacity: 0.65; cursor: default; }
+
+/* ---------- Row-action variants ---------- */
+
+.rowActionDanger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 6px;
+  color: #f87171;
+  font-size: 11.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 120ms;
+}
+.rowActionDanger:hover:not(:disabled) { background: rgba(239, 68, 68, 0.25); }
+.rowActionDanger:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ---------- Poster thumb (in the missions table) ---------- */
+
+.posterThumbLink {
+  display: inline-block;
+  line-height: 0;
+}
+
+.posterThumb {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 120ms;
+}
+.posterThumbLink:hover .posterThumb { transform: scale(1.05); }
+
+/* ---------- Mission editor form ---------- */
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 6px;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.formLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.formInput {
+  padding: 9px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: white;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  resize: vertical;
+  min-width: 0;
+}
+.formInput:focus { border-color: #9333ea; }
+.formInput:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.formHint {
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.togglePillMini {
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 7px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 120ms, color 120ms;
+}
+
+.togglePillMiniOn {
+  background: #9333ea;
+  color: white;
+  border-color: transparent;
+}
+
+.posterRow {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.posterPreview {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.posterEmpty {
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 10.5px;
+}
+
+.posterControls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.posterUpload {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  background: rgba(147, 51, 234, 0.15);
+  border: 1px solid rgba(147, 51, 234, 0.4);
+  border-radius: 8px;
+  color: #c084fc;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 120ms;
+}
+.posterUpload:hover { background: rgba(147, 51, 234, 0.25); }

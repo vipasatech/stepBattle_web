@@ -17,7 +17,10 @@ function App() {
         <Route path="/upgrade" element={<Upgrade />} />
         <Route path="/upgrade/success" element={<UpgradeSuccess />} />
         <Route path="/upgrade/failed" element={<UpgradeFailed />} />
-        <Route path="/admin" element={<Admin />} />
+        {/* Non-obvious URL to reduce hits from `/admin` scanners.
+            Not a security boundary — the real gate is the is_admin
+            flag checked server-side on every /api/admin-* call. */}
+        <Route path="/admin-vp9421" element={<Admin />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

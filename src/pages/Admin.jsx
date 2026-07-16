@@ -3,12 +3,16 @@ import {
   Activity,
   BarChart3,
   Download,
+  Flag,
   IndianRupee,
+  Image as ImageIcon,
   LogOut,
   Mail,
+  Plus,
   RefreshCcw,
   Search,
   ShieldCheck,
+  Trash2,
   Undo2,
   Users,
 } from "lucide-react";
@@ -125,7 +129,10 @@ function LoginForm() {
         // Keeps the flow single-device: even if Supabase's template
         // eventually adds a link, clicking it lands the user back
         // on /admin instead of a bare confirmation page.
-        emailRedirectTo: `${window.location.origin}/admin`,
+        // Uses the current URL as-is so the redirect always
+        // lands where the admin actually started — no hardcoded
+        // path to drift out of sync with the route.
+        emailRedirectTo: `${window.location.origin}${window.location.pathname}`,
       },
     });
     if (error) {
@@ -277,6 +284,12 @@ function AdminShell({ session, metrics, setMetrics }) {
           label="Payments"
         />
         <TabButton
+          active={tab === "missions"}
+          onClick={() => setTab("missions")}
+          icon={<Flag size={14} />}
+          label="Missions"
+        />
+        <TabButton
           active={tab === "activity"}
           onClick={() => setTab("activity")}
           icon={<Activity size={14} />}
@@ -291,6 +304,7 @@ function AdminShell({ session, metrics, setMetrics }) {
         {tab === "payments" && (
           <PaymentsTab authHeader={authHeader} onChange={refreshMetrics} />
         )}
+        {tab === "missions" && <MissionsTab authHeader={authHeader} />}
         {tab === "activity" && <ActivityTab authHeader={authHeader} />}
       </section>
     </main>
@@ -865,6 +879,473 @@ function ActivityTab({ authHeader }) {
       </div>
     </>
   );
+}
+
+function MissionsTab({ authHeader }) {
+  const [missions, setMissions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(null); // null | mission | 'new'
+  const [busyDelete, setBusyDelete] = useState(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const res = await fetch("/api/admin-missions-list", {
+      headers: authHeader,
+    });
+    if (res.ok) {
+      const json = await res.json();
+      setMissions(json.missions);
+    }
+    setLoading(false);
+  }, [authHeader]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  async function del(id) {
+    if (!confirm(`Delete mission "${id}"? This cannot be undone.`)) return;
+    setBusyDelete(id);
+    const res = await fetch("/api/admin-missions-delete", {
+      method: "POST",
+      headers: { ...authHeader, "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    setBusyDelete(null);
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      alert(body?.error ?? `HTTP ${res.status}`);
+      return;
+    }
+    load();
+  }
+
+  return (
+    <>
+      <div className={styles.filterRow}>
+        <span className={styles.dim}>
+          {missions.length} mission{missions.length === 1 ? "" : "s"} in the catalog · higher display_order sorts first on Home
+        </span>
+        <div className={styles.filterRowRight}>
+          <button className={styles.refresh} onClick={load}>
+            <RefreshCcw size={13} />
+            Refresh
+          </button>
+          <button
+            className={styles.rowAction}
+            onClick={() => setEditing("new")}
+            style={{ padding: "8px 14px" }}
+          >
+            <Plus size={13} />
+            New mission
+          </button>
+        </div>
+      </div>
+
+      <div className={styles.tableScroll}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Mission</th>
+              <th>Type</th>
+              <th>Category</th>
+              <th>Target</th>
+              <th>XP</th>
+              <th>Featured</th>
+              <th>Order</th>
+              <th>Poster</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading && (
+              <tr>
+                <td colSpan={9} className={styles.tableEmpty}>Loading…</td>
+              </tr>
+            )}
+            {!loading && missions.length === 0 && (
+              <tr>
+                <td colSpan={9} className={styles.tableEmpty}>
+                  No missions yet — click "New mission" to add one.
+                </td>
+              </tr>
+            )}
+            {missions.map((m) => (
+              <tr key={m.id}>
+                <td>
+                  <div className={styles.userCell}>
+                    <span className={styles.userName}>{m.title}</span>
+                    <span className={styles.userId}>{m.id}</span>
+                  </div>
+                </td>
+                <td>
+                  <span className={styles.actionPill}>{m.type}</span>
+                </td>
+                <td className={styles.dim}>{m.category}</td>
+                <td>{m.target_value?.toLocaleString?.("en-IN") ?? m.target_value}</td>
+                <td>{m.xp_reward}</td>
+                <td>
+                  {m.should_show_in_home ? (
+                    <span
+                      className={styles.tierPill}
+                      style={{
+                        background: "rgba(251, 191, 36, 0.18)",
+                        color: "#fbbf24",
+                      }}
+                    >
+                      Featured
+                    </span>
+                  ) : (
+                    <span className={styles.dim}>—</span>
+                  )}
+                </td>
+                <td className={styles.dim}>{m.display_order}</td>
+                <td>
+                  {m.poster_url ? (
+                    <a
+                      href={m.poster_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={styles.posterThumbLink}
+                    >
+                      <img
+                        src={m.poster_url}
+                        alt=""
+                        className={styles.posterThumb}
+                      />
+                    </a>
+                  ) : (
+                    <span className={styles.dim}>—</span>
+                  )}
+                </td>
+                <td>
+                  <div style={{ display: "inline-flex", gap: 6 }}>
+                    <button
+                      className={styles.rowAction}
+                      onClick={() => setEditing(m)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className={styles.rowActionDanger}
+                      onClick={() => del(m.id)}
+                      disabled={busyDelete === m.id || m.id === "daily_streak"}
+                      title={
+                        m.id === "daily_streak"
+                          ? "Protected — the app depends on this mission"
+                          : "Delete"
+                      }
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {editing && (
+        <MissionEditorModal
+          initial={editing === "new" ? null : editing}
+          authHeader={authHeader}
+          onClose={() => setEditing(null)}
+          onSaved={() => {
+            setEditing(null);
+            load();
+          }}
+        />
+      )}
+    </>
+  );
+}
+
+function MissionEditorModal({ initial, authHeader, onClose, onSaved }) {
+  const isNew = !initial;
+  const [form, setForm] = useState(
+    initial ?? {
+      id: "",
+      type: "daily",
+      title: "",
+      description: "",
+      category: "steps",
+      target_value: 5000,
+      xp_reward: 100,
+      difficulty: "easy",
+      should_show_in_home: false,
+      poster_url: null,
+      display_order: 100,
+    },
+  );
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState("");
+  const [posterBusy, setPosterBusy] = useState(false);
+
+  function update(patch) {
+    setForm((f) => ({ ...f, ...patch }));
+  }
+
+  async function onPosterFile(file) {
+    if (!file) return;
+    if (!form.id.trim()) {
+      setErr("Set the mission id first — it's used to name the file.");
+      return;
+    }
+    setPosterBusy(true);
+    setErr("");
+    try {
+      const dataBase64 = await fileToBase64(file);
+      const res = await fetch("/api/admin-mission-poster-upload", {
+        method: "POST",
+        headers: { ...authHeader, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          missionId: form.id.trim(),
+          filename: file.name,
+          contentType: file.type,
+          dataBase64,
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.error ?? `HTTP ${res.status}`);
+      }
+      const { publicUrl } = await res.json();
+      update({ poster_url: publicUrl });
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setPosterBusy(false);
+    }
+  }
+
+  async function save() {
+    setSaving(true);
+    setErr("");
+    const res = await fetch("/api/admin-missions-upsert", {
+      method: "POST",
+      headers: { ...authHeader, "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      setErr(body?.error ?? `HTTP ${res.status}`);
+      setSaving(false);
+      return;
+    }
+    onSaved();
+  }
+
+  return (
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div
+        className={styles.modal}
+        onClick={(e) => e.stopPropagation()}
+        style={{ maxWidth: 560 }}
+      >
+        <h3 className={styles.modalTitle}>
+          {isNew ? "New mission" : `Edit ${initial.id}`}
+        </h3>
+        <p className={styles.modalSub}>
+          {isNew
+            ? "Publishes immediately to every device on next mission-catalog fetch."
+            : "Changes apply on the next mission-catalog fetch (~seconds)."}
+        </p>
+
+        <div className={styles.formGrid}>
+          <FormField label="Mission id" hint="lowercase / digits / underscores">
+            <input
+              className={styles.formInput}
+              value={form.id}
+              onChange={(e) => update({ id: e.target.value })}
+              disabled={!isNew}
+              placeholder="daily_arena"
+            />
+          </FormField>
+
+          <FormField label="Type">
+            <select
+              className={styles.formInput}
+              value={form.type}
+              onChange={(e) => update({ type: e.target.value })}
+            >
+              <option value="daily">daily</option>
+              <option value="weekly">weekly</option>
+            </select>
+          </FormField>
+
+          <FormField label="Title" full>
+            <input
+              className={styles.formInput}
+              value={form.title}
+              onChange={(e) => update({ title: e.target.value })}
+              placeholder="Walk 5,000 Steps"
+            />
+          </FormField>
+
+          <FormField label="Description" full>
+            <textarea
+              className={styles.formInput}
+              rows={2}
+              value={form.description ?? ""}
+              onChange={(e) => update({ description: e.target.value })}
+              placeholder="Hit your daily step target"
+            />
+          </FormField>
+
+          <FormField label="Category">
+            <select
+              className={styles.formInput}
+              value={form.category}
+              onChange={(e) => update({ category: e.target.value })}
+            >
+              <option value="steps">steps</option>
+              <option value="battle">battle</option>
+              <option value="streak">streak</option>
+              <option value="calories">calories</option>
+            </select>
+          </FormField>
+
+          <FormField label="Difficulty">
+            <select
+              className={styles.formInput}
+              value={form.difficulty}
+              onChange={(e) => update({ difficulty: e.target.value })}
+            >
+              <option value="easy">easy</option>
+              <option value="medium">medium</option>
+              <option value="hard">hard</option>
+            </select>
+          </FormField>
+
+          <FormField label="Target value">
+            <input
+              type="number"
+              className={styles.formInput}
+              value={form.target_value}
+              onChange={(e) => update({ target_value: e.target.value })}
+              min={1}
+            />
+          </FormField>
+
+          <FormField label="XP reward">
+            <input
+              type="number"
+              className={styles.formInput}
+              value={form.xp_reward}
+              onChange={(e) => update({ xp_reward: e.target.value })}
+              min={0}
+            />
+          </FormField>
+
+          <FormField label="Display order" hint="higher = sorts first">
+            <input
+              type="number"
+              className={styles.formInput}
+              value={form.display_order}
+              onChange={(e) => update({ display_order: e.target.value })}
+            />
+          </FormField>
+
+          <FormField label="Featured on Home?" hint="shows as big card on Home">
+            <div className={styles.toggleRow}>
+              <button
+                type="button"
+                onClick={() =>
+                  update({ should_show_in_home: !form.should_show_in_home })
+                }
+                className={`${styles.togglePillMini} ${
+                  form.should_show_in_home ? styles.togglePillMiniOn : ""
+                }`}
+              >
+                {form.should_show_in_home ? "On" : "Off"}
+              </button>
+            </div>
+          </FormField>
+
+          <FormField label="Poster image" full hint="PNG / JPG / WebP · up to 5 MB">
+            <div className={styles.posterRow}>
+              {form.poster_url ? (
+                <img
+                  src={form.poster_url}
+                  alt=""
+                  className={styles.posterPreview}
+                />
+              ) : (
+                <div className={styles.posterEmpty}>
+                  <ImageIcon size={22} />
+                  <span>No poster</span>
+                </div>
+              )}
+              <div className={styles.posterControls}>
+                <label className={styles.posterUpload}>
+                  {posterBusy ? "Uploading…" : "Choose image"}
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    hidden
+                    disabled={posterBusy}
+                    onChange={(e) => onPosterFile(e.target.files?.[0])}
+                  />
+                </label>
+                {form.poster_url && (
+                  <button
+                    type="button"
+                    className={styles.modalGhost}
+                    onClick={() => update({ poster_url: null })}
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+          </FormField>
+        </div>
+
+        {err && <p className={styles.modalError}>{err}</p>}
+
+        <div className={styles.modalActions}>
+          <button className={styles.modalGhost} onClick={onClose}>
+            Cancel
+          </button>
+          <button
+            className={styles.modalPrimary}
+            onClick={save}
+            disabled={saving}
+          >
+            {saving ? "Saving…" : isNew ? "Create mission" : "Save changes"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FormField({ label, hint, children, full }) {
+  return (
+    <div
+      className={styles.formField}
+      style={{ gridColumn: full ? "1 / -1" : undefined }}
+    >
+      <label className={styles.formLabel}>{label}</label>
+      {children}
+      {hint && <span className={styles.formHint}>{hint}</span>}
+    </div>
+  );
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => {
+      const s = r.result;
+      // strip "data:image/png;base64," prefix
+      const comma = s.indexOf(",");
+      resolve(comma >= 0 ? s.slice(comma + 1) : s);
+    };
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(file);
+  });
 }
 
 function TabButton({ active, onClick, icon, label }) {
