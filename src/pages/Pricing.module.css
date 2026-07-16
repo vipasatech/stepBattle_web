@@ -1,0 +1,329 @@
+.page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% -10%, rgba(147, 51, 234, 0.28), transparent 55%),
+    radial-gradient(circle at 85% 10%, rgba(59, 130, 246, 0.18), transparent 50%),
+    #07010f;
+  padding: 60px 24px 80px;
+  color: white;
+}
+
+.hero {
+  max-width: 900px;
+  margin: 0 auto 48px;
+  text-align: center;
+}
+
+.homeLink {
+  display: inline-block;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 13px;
+  margin-bottom: 24px;
+  transition: color 120ms;
+}
+.homeLink:hover { color: #c084fc; }
+
+.title {
+  font-size: 44px;
+  font-weight: 900;
+  margin: 0 0 12px;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, #ffffff 0%, #c084fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sub {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 15px;
+  line-height: 1.55;
+  margin: 0 auto;
+  max-width: 520px;
+}
+
+.toggle {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  margin-top: 28px;
+}
+
+.togglePill {
+  padding: 10px 20px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.togglePillOn {
+  background: #9333ea;
+  color: white;
+}
+
+.saveBadge {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(251, 191, 36, 0.22);
+  color: #fbbf24;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  line-height: 1;
+}
+
+.togglePillOn .saveBadge {
+  background: rgba(255, 255, 255, 0.22);
+  color: white;
+}
+
+.cards {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.card {
+  position: relative;
+  padding: 30px 26px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  transition: transform 200ms ease, border-color 200ms ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--tier-accent);
+}
+
+.cardFeatured {
+  border-color: var(--tier-accent);
+  box-shadow: 0 30px 60px -20px rgba(147, 51, 234, 0.4);
+}
+
+.badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 12px;
+  background: linear-gradient(135deg, var(--tier-accent), #7c3aed);
+  color: white;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tierName {
+  font-size: 20px;
+  font-weight: 900;
+  margin: 0;
+  color: var(--tier-accent);
+  letter-spacing: 0.3px;
+}
+
+.tierSub {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12.5px;
+  margin: 2px 0 20px;
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 20px;
+  min-height: 56px;
+}
+
+.price {
+  font-size: 44px;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.per {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+}
+
+.cta {
+  display: block;
+  padding: 12px;
+  text-align: center;
+  border-radius: 12px;
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  margin-bottom: 22px;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.ctaPrimary {
+  background: linear-gradient(135deg, var(--tier-accent), #7c3aed);
+  color: white;
+  box-shadow: 0 12px 24px -8px rgba(147, 51, 234, 0.5);
+}
+
+.ctaPrimary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 30px -8px rgba(147, 51, 234, 0.6);
+}
+
+.ctaGhost {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ctaGhost:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.featureList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.featureRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.featureCheck {
+  color: var(--tier-accent);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.featureText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.featureLabel {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.featureValue {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.matrixSection {
+  max-width: 1000px;
+  margin: 80px auto 0;
+}
+
+.matrixTitle {
+  font-size: 24px;
+  font-weight: 800;
+  text-align: center;
+  margin: 0 0 24px;
+}
+
+.matrixScroll {
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.matrix {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 500px;
+}
+
+.matrix thead th {
+  padding: 16px 20px;
+  text-align: left;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.matrixFeatureCol {
+  width: 40%;
+}
+
+.matrixTierCol {
+  color: var(--tier-accent) !important;
+}
+
+.matrixDot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.matrix tbody td {
+  padding: 14px 20px;
+  font-size: 13.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.matrix tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.matrixFeature {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 700;
+}
+
+.matrixCell {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.fallback {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12.5px;
+  margin: 28px 0 0;
+  font-style: italic;
+}

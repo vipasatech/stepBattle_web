@@ -1,0 +1,658 @@
+.fullscreen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background:
+    radial-gradient(circle at top, rgba(128, 0, 255, 0.22), transparent 45%),
+    #07010f;
+  color: white;
+}
+
+.fullscreenCard {
+  max-width: 420px;
+  padding: 24px 28px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.55;
+}
+
+.fullscreenError {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* ---------- Login ---------- */
+
+.loginPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background:
+    radial-gradient(circle at top, rgba(128, 0, 255, 0.24), transparent 45%),
+    #07010f;
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 380px;
+  padding: 40px 32px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(147, 51, 234, 0.35);
+  text-align: center;
+  color: white;
+}
+
+.loginIcon {
+  color: #c084fc;
+  margin-bottom: 12px;
+}
+
+.loginTitle {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0 0 6px;
+}
+
+.loginSub {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  margin: 0 0 24px;
+  line-height: 1.55;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.loginInputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.loginInputIcon {
+  position: absolute;
+  left: 12px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.loginInput {
+  width: 100%;
+  padding: 12px 12px 12px 36px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 120ms;
+}
+.loginInput:focus { border-color: #9333ea; }
+
+.loginButton {
+  padding: 12px;
+  background: linear-gradient(135deg, #9333ea, #7c3aed);
+  color: white;
+  font-size: 14px;
+  font-weight: 800;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: opacity 120ms, transform 120ms;
+}
+.loginButton:disabled { opacity: 0.65; cursor: default; }
+
+.loginNote {
+  color: #4ade80;
+  font-size: 12.5px;
+  margin: 4px 0 0;
+  line-height: 1.5;
+}
+
+.loginError {
+  color: #f87171;
+  font-size: 12.5px;
+  margin: 4px 0 0;
+  line-height: 1.5;
+}
+
+/* ---------- Shell ---------- */
+
+.shell {
+  min-height: 100vh;
+  background: #07010f;
+  color: white;
+  padding: 20px 24px 60px;
+}
+
+.shellHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 22px;
+}
+
+.shellHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #c084fc;
+}
+
+.shellTitle {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.shellHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.shellMeta {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.signOut {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 120ms;
+}
+.signOut:hover { background: rgba(255, 255, 255, 0.1); }
+
+/* ---------- Metrics bar ---------- */
+
+.metricsBar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 22px;
+  align-items: stretch;
+}
+
+.metricCard {
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+}
+
+.metricLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 6px;
+}
+
+.metricValue {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+.refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 120ms;
+}
+.refresh:hover { background: rgba(255, 255, 255, 0.1); }
+
+/* ---------- Tabs ---------- */
+
+.tabs {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  margin-bottom: 18px;
+  width: fit-content;
+}
+
+.tabButton {
+  padding: 8px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 120ms, color 120ms;
+}
+
+.tabButtonOn {
+  background: #9333ea;
+  color: white;
+}
+
+.tabBody {
+  min-height: 400px;
+}
+
+/* ---------- Filter row (shared by all tabs) ---------- */
+
+.filterRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.filterRowRight {
+  display: flex;
+  gap: 8px;
+}
+
+.filterPills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filterPill {
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: capitalize;
+  transition: background 120ms, color 120ms;
+}
+
+.filterPillOn {
+  background: #9333ea;
+  color: white;
+  border-color: transparent;
+}
+
+.searchWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  flex: 1;
+  min-width: 240px;
+  max-width: 400px;
+}
+
+.searchInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 13px;
+  outline: none;
+}
+.searchInput::placeholder { color: rgba(255, 255, 255, 0.35); }
+
+/* ---------- Table ---------- */
+
+.tableScroll {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+  font-size: 13px;
+}
+
+.table thead th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  position: sticky;
+  top: 0;
+}
+
+.table tbody td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  vertical-align: middle;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.tableEmpty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.45);
+  padding: 30px 12px !important;
+  font-style: italic;
+}
+
+.dim {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.userCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.userName {
+  font-weight: 700;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.userEmail {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.userId {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.adminBadge {
+  padding: 1px 5px;
+  background: rgba(251, 191, 36, 0.22);
+  color: #fbbf24;
+  font-size: 8.5px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.rowAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: rgba(147, 51, 234, 0.18);
+  border: 1px solid rgba(147, 51, 234, 0.4);
+  border-radius: 6px;
+  color: #c084fc;
+  font-size: 11.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 120ms;
+}
+.rowAction:hover { background: rgba(147, 51, 234, 0.3); }
+
+.tierPill {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.tierPillInline {
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.actionPill {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(59, 130, 246, 0.16);
+  color: #60a5fa;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.detailsBlob {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.55);
+  word-break: break-all;
+  max-width: 380px;
+  display: inline-block;
+}
+
+/* ---------- Modal (shared: SetTier + Refund) ---------- */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+}
+
+.modal {
+  width: 100%;
+  max-width: 440px;
+  padding: 24px 26px;
+  background: #12081d;
+  border: 1px solid rgba(147, 51, 234, 0.35);
+  border-radius: 16px;
+  color: white;
+}
+
+.modalTitle {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0 0 4px;
+}
+
+.modalSub {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12.5px;
+  margin: 0 0 18px;
+  line-height: 1.55;
+}
+
+.modalLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 12px 0 6px;
+}
+
+.modalHint {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 11.5px;
+  margin: 4px 0 0;
+  line-height: 1.55;
+}
+
+.modalError {
+  color: #f87171;
+  font-size: 12.5px;
+  margin: 10px 0 0;
+}
+
+.modalTextarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: white;
+  font-family: inherit;
+  font-size: 13px;
+  resize: vertical;
+  outline: none;
+}
+.modalTextarea:focus { border-color: #9333ea; }
+
+.tierPicker {
+  display: flex;
+  gap: 6px;
+}
+
+.tierOption {
+  flex: 1;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: background 120ms, color 120ms;
+}
+
+.tierOptionOn {
+  background: #9333ea;
+  color: white;
+  border-color: transparent;
+}
+
+.monthsPicker {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.monthChip {
+  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.monthChipOn {
+  background: #9333ea;
+  color: white;
+  border-color: transparent;
+}
+
+.monthInput {
+  width: 70px;
+  padding: 7px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  color: white;
+  font-size: 12px;
+  outline: none;
+}
+
+.modalActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 22px;
+}
+
+.modalGhost {
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modalPrimary {
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #9333ea, #7c3aed);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: opacity 120ms;
+}
+.modalPrimary:disabled { opacity: 0.65; cursor: default; }
