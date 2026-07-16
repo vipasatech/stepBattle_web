@@ -4,6 +4,8 @@ import { Check, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { FEATURE_ROWS, PRICING_TIERS } from "../lib/pricingMatrix";
+// FEATURE_ROWS drives the per-card feature labels; the standalone
+// comparison table below the cards was removed as redundant.
 import styles from "./Pricing.module.css";
 
 /// Public pricing page — no auth, no uid. Marketing surface.
@@ -120,49 +122,10 @@ export default function Pricing() {
         ))}
       </section>
 
-      <section className={styles.matrixSection}>
-        <h2 className={styles.matrixTitle}>Compare every feature</h2>
-        <div className={styles.matrixScroll}>
-          <table className={styles.matrix}>
-            <thead>
-              <tr>
-                <th className={styles.matrixFeatureCol}>Feature</th>
-                {PRICING_TIERS.map((t) => (
-                  <th
-                    key={t.key}
-                    className={styles.matrixTierCol}
-                    style={{ "--tier-accent": t.accent }}
-                  >
-                    <span
-                      className={styles.matrixDot}
-                      style={{ background: t.accent }}
-                    />
-                    {t.name}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {FEATURE_ROWS.map((row, idx) => (
-                <tr key={row}>
-                  <td className={styles.matrixFeature}>{row}</td>
-                  {PRICING_TIERS.map((t) => (
-                    <td key={t.key} className={styles.matrixCell}>
-                      {t.values[idx]}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <p className={styles.fallback}>
-          Don't have the app yet? Downloads coming soon —
-          in the meantime, sign up on the mobile app to
-          unlock upgrades.
-        </p>
-      </section>
+      <p className={styles.fallback}>
+        Don't have the app yet? Downloads coming soon — in the meantime,
+        sign up on the mobile app to unlock upgrades.
+      </p>
     </main>
   );
 }

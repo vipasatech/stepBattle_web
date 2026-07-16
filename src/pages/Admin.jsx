@@ -104,25 +104,54 @@ export default function Admin() {
 }
 
 function LoginForm() {
+  // Two-step OTP flow. Supabase's default email template on this
+  // project sends a 6- or 7-digit code (not a magic link), so we
+  // let the user paste the code here rather than requiring a
+  // link tap. `signInWithOtp` sends the code; `verifyOtp` with
+  // type='email' exchanges it for a session — same result as
+  // clicking the link would have produced.
+  const [step, setStep] = useState("email");
   const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
   const [state, setState] = useState({ status: "idle", message: "" });
 
-  async function sendLink(e) {
+  async function sendCode(e) {
     e.preventDefault();
     if (!email) return;
     setState({ status: "sending", message: "" });
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${window.location.origin}/admin` },
+      options: {
+        // Keeps the flow single-device: even if Supabase's template
+        // eventually adds a link, clicking it lands the user back
+        // on /admin instead of a bare confirmation page.
+        emailRedirectTo: `${window.location.origin}/admin`,
+      },
     });
     if (error) {
       setState({ status: "error", message: error.message });
-    } else {
-      setState({
-        status: "sent",
-        message: `Magic link sent. Check ${email} — click it on this device.`,
-      });
+      return;
     }
+    setStep("code");
+    setState({ status: "sent", message: `Code sent to ${email}.` });
+  }
+
+  async function verifyCode(e) {
+    e.preventDefault();
+    if (!code) return;
+    setState({ status: "verifying", message: "" });
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token: code.trim(),
+      type: "email",
+    });
+    if (error) {
+      setState({ status: "error", message: error.message });
+      return;
+    }
+    // The onAuthStateChange listener up in Admin() picks up the
+    // new session and transitions the page automatically.
+    setState({ status: "idle", message: "" });
   }
 
   return (
@@ -131,35 +160,77 @@ function LoginForm() {
         <ShieldCheck size={32} className={styles.loginIcon} />
         <h1 className={styles.loginTitle}>StepBattle Admin</h1>
         <p className={styles.loginSub}>
-          Sign in with your admin email. We'll send a one-tap link.
+          {step === "email"
+            ? "Sign in with your admin email. We'll send a one-time code."
+            : `Enter the code we just emailed to ${email}.`}
         </p>
-        <form onSubmit={sendLink} className={styles.loginForm}>
-          <div className={styles.loginInputWrap}>
-            <Mail size={16} className={styles.loginInputIcon} />
+
+        {step === "email" && (
+          <form onSubmit={sendCode} className={styles.loginForm}>
+            <div className={styles.loginInputWrap}>
+              <Mail size={16} className={styles.loginInputIcon} />
+              <input
+                className={styles.loginInput}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@example.com"
+                required
+                autoFocus
+              />
+            </div>
+            <button
+              type="submit"
+              className={styles.loginButton}
+              disabled={state.status === "sending"}
+            >
+              {state.status === "sending" ? "Sending…" : "Send code"}
+            </button>
+            {state.status === "error" && (
+              <p className={styles.loginError}>{state.message}</p>
+            )}
+          </form>
+        )}
+
+        {step === "code" && (
+          <form onSubmit={verifyCode} className={styles.loginForm}>
             <input
-              className={styles.loginInput}
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@example.com"
+              className={`${styles.loginInput} ${styles.loginCodeInput}`}
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              value={code}
+              onChange={(e) => setCode(e.target.value.replace(/\s/g, ""))}
+              placeholder="123 456"
               required
               autoFocus
             />
-          </div>
-          <button
-            type="submit"
-            className={styles.loginButton}
-            disabled={state.status === "sending"}
-          >
-            {state.status === "sending" ? "Sending…" : "Send magic link"}
-          </button>
-          {state.status === "sent" && (
-            <p className={styles.loginNote}>{state.message}</p>
-          )}
-          {state.status === "error" && (
-            <p className={styles.loginError}>{state.message}</p>
-          )}
-        </form>
+            <button
+              type="submit"
+              className={styles.loginButton}
+              disabled={state.status === "verifying"}
+            >
+              {state.status === "verifying" ? "Verifying…" : "Verify code"}
+            </button>
+            <button
+              type="button"
+              className={styles.loginBackButton}
+              onClick={() => {
+                setStep("email");
+                setCode("");
+                setState({ status: "idle", message: "" });
+              }}
+            >
+              Use a different email
+            </button>
+            {state.status === "sent" && (
+              <p className={styles.loginNote}>{state.message}</p>
+            )}
+            {state.status === "error" && (
+              <p className={styles.loginError}>{state.message}</p>
+            )}
+          </form>
+        )}
       </div>
     </main>
   );

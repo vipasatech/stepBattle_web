@@ -125,6 +125,27 @@
   line-height: 1.5;
 }
 
+.loginCodeInput {
+  text-align: center;
+  letter-spacing: 6px;
+  font-size: 22px;
+  font-weight: 800;
+  padding: 14px 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.loginBackButton {
+  padding: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 120ms;
+}
+.loginBackButton:hover { color: rgba(255, 255, 255, 0.8); }
+
 /* ---------- Shell ---------- */
 
 .shell {
