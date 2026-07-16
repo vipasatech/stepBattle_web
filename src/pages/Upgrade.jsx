@@ -166,14 +166,18 @@ export default function Upgrade() {
         />
 
         <div className={styles.priceRow}>
-          <span className={styles.price}>₹{price}</span>
-          <span className={styles.period}>
-            / {period === "yearly" ? "year" : "month"}
+          <span className={styles.price}>
+            ₹
+            {period === "yearly"
+              ? Math.round(plan.yearlyRupees / 12)
+              : plan.monthlyRupees}
           </span>
+          <span className={styles.period}>/ month</span>
         </div>
-        {period === "yearly" && plan.monthlyRupees && (
+        {period === "yearly" && (
           <p className={styles.saving}>
-            ~₹{Math.round(plan.yearlyRupees / 12)}/mo · save{" "}
+            billed annually · ₹
+            {plan.yearlyRupees.toLocaleString("en-IN")} · save{" "}
             {savingsPercent}% vs monthly
           </p>
         )}

@@ -80,15 +80,19 @@ export default function Pricing() {
                   <span className={styles.price}>
                     ₹
                     {period === "yearly"
-                      ? tier.yearlyRupees
+                      ? Math.round(tier.yearlyRupees / 12)
                       : tier.priceRupees}
                   </span>
-                  <span className={styles.per}>
-                    / {period === "yearly" ? "year" : "month"}
-                  </span>
+                  <span className={styles.per}>/ month</span>
                 </>
               )}
             </div>
+            {tier.priceRupees !== 0 && period === "yearly" && (
+              <p className={styles.billed}>
+                billed annually · ₹
+                {tier.yearlyRupees.toLocaleString("en-IN")}
+              </p>
+            )}
 
             <a
               href={tier.cta.href}

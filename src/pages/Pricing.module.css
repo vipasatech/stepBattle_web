@@ -172,6 +172,14 @@
   font-size: 13px;
 }
 
+.billed {
+  color: #fbbf24;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  margin: -12px 0 18px;
+}
+
 .cta {
   display: block;
   padding: 12px;
