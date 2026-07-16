@@ -362,7 +362,7 @@ function UsersTab({ authHeader, onChange }) {
     setLoading(true);
     const params = new URLSearchParams({ limit: "100" });
     if (q) params.set("q", q);
-    const res = await fetch(`/api/admin-users-list?${params}`, {
+    const res = await fetch(`/api/admin-users?${params}`, {
       headers: authHeader,
     });
     if (res.ok) {
@@ -481,7 +481,7 @@ function SetTierModal({ user, authHeader, onClose, onSaved }) {
   async function save() {
     setSaving(true);
     setErr("");
-    const res = await fetch("/api/admin-set-tier", {
+    const res = await fetch("/api/admin-users?op=set-tier", {
       method: "POST",
       headers: {
         ...authHeader,
@@ -584,7 +584,7 @@ function PaymentsTab({ authHeader, onChange }) {
   const load = useCallback(async () => {
     setLoading(true);
     const res = await fetch(
-      `/api/admin-payments-list?status=${status}&limit=100`,
+      `/api/admin-payments?status=${status}&limit=100`,
       { headers: authHeader },
     );
     if (res.ok) {
@@ -601,7 +601,7 @@ function PaymentsTab({ authHeader, onChange }) {
   function downloadCsv() {
     // The CSV endpoint requires the same bearer token; a plain <a>
     // download can't attach a header, so we fetch → blob → link.
-    fetch(`/api/admin-payments-csv?status=${status}`, {
+    fetch(`/api/admin-payments?format=csv&status=${status}`, {
       headers: authHeader,
     })
       .then((r) => r.blob())
@@ -740,7 +740,7 @@ function RefundModal({ payment, authHeader, onClose, onDone }) {
   async function submit() {
     setSaving(true);
     setErr("");
-    const res = await fetch("/api/admin-refund", {
+    const res = await fetch("/api/admin-payments?op=refund", {
       method: "POST",
       headers: { ...authHeader, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -889,7 +889,7 @@ function MissionsTab({ authHeader }) {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const res = await fetch("/api/admin-missions-list", {
+    const res = await fetch("/api/admin-missions", {
       headers: authHeader,
     });
     if (res.ok) {
@@ -906,7 +906,7 @@ function MissionsTab({ authHeader }) {
   async function del(id) {
     if (!confirm(`Delete mission "${id}"? This cannot be undone.`)) return;
     setBusyDelete(id);
-    const res = await fetch("/api/admin-missions-delete", {
+    const res = await fetch("/api/admin-missions?op=delete", {
       method: "POST",
       headers: { ...authHeader, "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
@@ -1122,7 +1122,7 @@ function MissionEditorModal({ initial, authHeader, onClose, onSaved }) {
   async function save() {
     setSaving(true);
     setErr("");
-    const res = await fetch("/api/admin-missions-upsert", {
+    const res = await fetch("/api/admin-missions?op=upsert", {
       method: "POST",
       headers: { ...authHeader, "Content-Type": "application/json" },
       body: JSON.stringify(form),
