@@ -46,6 +46,19 @@ export async function requireAdmin(req, res) {
   }
   const uid = data.user.id;
 
+  // Fast path: the Custom Access Token Auth Hook stitches
+  // `is_admin` into app_metadata when Supabase issues / refreshes
+  // the JWT. If it's present, we can honor it without touching
+  // the DB — saves one query per admin API call.
+  const claim = data.user.app_metadata?.is_admin;
+  if (claim === true) return { ok: true, adminId: uid };
+  if (claim === false) {
+    res.status(403).json({ error: "Not authorized" });
+    return { ok: false };
+  }
+
+  // Fallback: token was issued before the hook was enabled, or
+  // the claim was stripped by a client. One DB round-trip.
   const sb = supabaseAdmin();
   const { data: profile, error: profileErr } = await sb
     .from("profiles")

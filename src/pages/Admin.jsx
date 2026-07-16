@@ -29,62 +29,52 @@ import styles from "./Admin.module.css";
 export default function Admin() {
   const [session, setSession] = useState(null);
   const [status, setStatus] = useState("initializing");
-  const [error, setError] = useState("");
 
   // Bootstrap: restore any existing supabase session on first
-  // render, then subscribe to future auth changes.
+  // render, then subscribe to future auth changes. Admin gate is
+  // read straight from the JWT's `is_admin` app_metadata claim
+  // (injected by the Custom Access Token Auth Hook), so no server
+  // round-trip is needed to know if the user can see the panel.
   useEffect(() => {
     let mounted = true;
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
-      setSession(data?.session ?? null);
-      setStatus(data?.session ? "checking-admin" : "unauth");
+      applySession(data?.session ?? null);
     });
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_ev, s) => {
-      setSession(s ?? null);
-      setStatus(s ? "checking-admin" : "unauth");
-    });
+    } = supabase.auth.onAuthStateChange((_ev, s) => applySession(s ?? null));
     return () => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []);
 
-  // When we have a session, ping /api/admin-metrics — it's the
-  // cheapest endpoint that requires is_admin, so it doubles as
-  // our "am I actually an admin?" probe.
-  const [metrics, setMetrics] = useState(null);
-  useEffect(() => {
-    if (!session) return;
-    (async () => {
-      const res = await fetch("/api/admin-metrics", {
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      });
-      if (res.status === 403) {
+    function applySession(s) {
+      if (!s) {
+        setSession(null);
+        setStatus("unauth");
+        return;
+      }
+      const claim = s.user?.app_metadata?.is_admin;
+      // Explicit false → block. True or missing → grant. The
+      // "missing" case covers tokens issued before the Auth Hook
+      // was enabled; every /api/admin-* call will still 403 if the
+      // server-side guard finds the user isn't actually admin.
+      if (claim === false) {
+        setSession(s);
         setStatus("forbidden");
         return;
       }
-      if (!res.ok) {
-        setError(`Failed to load: ${res.status}`);
-        setStatus("error");
-        return;
-      }
-      const json = await res.json();
-      setMetrics(json);
+      setSession(s);
       setStatus("ready");
-    })();
-  }, [session]);
+    }
+  }, []);
 
   if (status === "initializing") {
     return <FullscreenMessage>Loading…</FullscreenMessage>;
   }
   if (status === "unauth" || !session) {
     return <LoginForm />;
-  }
-  if (status === "checking-admin") {
-    return <FullscreenMessage>Verifying admin access…</FullscreenMessage>;
   }
   if (status === "forbidden") {
     return (
@@ -95,16 +85,8 @@ export default function Admin() {
       </FullscreenMessage>
     );
   }
-  if (status === "error") {
-    return (
-      <FullscreenMessage tone="error">
-        {error}
-        <SignOutButton />
-      </FullscreenMessage>
-    );
-  }
 
-  return <AdminShell session={session} metrics={metrics} setMetrics={setMetrics} />;
+  return <AdminShell session={session} />;
 }
 
 function LoginForm() {
@@ -243,17 +225,49 @@ function LoginForm() {
   );
 }
 
-function AdminShell({ session, metrics, setMetrics }) {
-  const [tab, setTab] = useState("users");
+/// Cache shape:
+///   { metrics: null|object, users: null|array, payments: null|array,
+///     missions: null|array, activity: null|array }
+/// Each key stays null until the corresponding tab is opened for the
+/// first time. Refresh (per tab) clears the key and re-fetches.
+function AdminShell({ session }) {
   const authHeader = useMemo(
     () => ({ Authorization: `Bearer ${session.access_token}` }),
     [session.access_token],
   );
 
-  const refreshMetrics = useCallback(async () => {
-    const res = await fetch("/api/admin-metrics", { headers: authHeader });
-    if (res.ok) setMetrics(await res.json());
-  }, [authHeader, setMetrics]);
+  const [tab, setTab] = useState(null); // null → empty state; user picks one
+  const [cache, setCache] = useState({
+    metrics: null,
+    users: null,
+    payments: null,
+    missions: null,
+    activity: null,
+  });
+
+  const setTabCache = useCallback((key, value) => {
+    setCache((c) => ({ ...c, [key]: value }));
+  }, []);
+
+  // After a mutation (set-tier, refund, mission upsert/delete),
+  // invalidate every cache that might have shown stale data.
+  const invalidateAll = useCallback(() => {
+    setCache({
+      metrics: null,
+      users: null,
+      payments: null,
+      missions: null,
+      activity: null,
+    });
+  }, []);
+
+  const tabs = [
+    { id: "metrics", label: "Metrics", icon: <BarChart3 size={14} /> },
+    { id: "users", label: "Users", icon: <Users size={14} /> },
+    { id: "payments", label: "Payments", icon: <IndianRupee size={14} /> },
+    { id: "missions", label: "Missions", icon: <Flag size={14} /> },
+    { id: "activity", label: "Activity", icon: <Activity size={14} /> },
+  ];
 
   return (
     <main className={styles.shell}>
@@ -268,130 +282,418 @@ function AdminShell({ session, metrics, setMetrics }) {
         </div>
       </header>
 
-      <MetricsBar metrics={metrics} onRefresh={refreshMetrics} />
-
       <nav className={styles.tabs}>
-        <TabButton
-          active={tab === "users"}
-          onClick={() => setTab("users")}
-          icon={<Users size={14} />}
-          label="Users"
-        />
-        <TabButton
-          active={tab === "payments"}
-          onClick={() => setTab("payments")}
-          icon={<IndianRupee size={14} />}
-          label="Payments"
-        />
-        <TabButton
-          active={tab === "missions"}
-          onClick={() => setTab("missions")}
-          icon={<Flag size={14} />}
-          label="Missions"
-        />
-        <TabButton
-          active={tab === "activity"}
-          onClick={() => setTab("activity")}
-          icon={<Activity size={14} />}
-          label="Activity"
-        />
+        {tabs.map((t) => (
+          <TabButton
+            key={t.id}
+            active={tab === t.id}
+            onClick={() => setTab(t.id)}
+            icon={t.icon}
+            label={t.label}
+          />
+        ))}
       </nav>
 
       <section className={styles.tabBody}>
+        {tab === null && (
+          <div className={styles.emptyPrompt}>
+            <p>Pick a section above to load its data.</p>
+            <p className={styles.dim}>
+              Nothing is fetched until you ask for it. Each section
+              stays cached in memory until you click Refresh.
+            </p>
+          </div>
+        )}
+        {tab === "metrics" && (
+          <MetricsView
+            authHeader={authHeader}
+            cache={cache.metrics}
+            setCache={(v) => setTabCache("metrics", v)}
+          />
+        )}
         {tab === "users" && (
-          <UsersTab authHeader={authHeader} onChange={refreshMetrics} />
+          <UsersTab
+            authHeader={authHeader}
+            cache={cache.users}
+            setCache={(v) => setTabCache("users", v)}
+            onWrite={invalidateAll}
+          />
         )}
         {tab === "payments" && (
-          <PaymentsTab authHeader={authHeader} onChange={refreshMetrics} />
+          <PaymentsTab
+            authHeader={authHeader}
+            cache={cache.payments}
+            setCache={(v) => setTabCache("payments", v)}
+            onWrite={invalidateAll}
+          />
         )}
-        {tab === "missions" && <MissionsTab authHeader={authHeader} />}
-        {tab === "activity" && <ActivityTab authHeader={authHeader} />}
+        {tab === "missions" && (
+          <MissionsTab
+            authHeader={authHeader}
+            cache={cache.missions}
+            setCache={(v) => setTabCache("missions", v)}
+            onWrite={invalidateAll}
+          />
+        )}
+        {tab === "activity" && (
+          <ActivityTab
+            authHeader={authHeader}
+            cache={cache.activity}
+            setCache={(v) => setTabCache("activity", v)}
+          />
+        )}
       </section>
     </main>
   );
 }
 
-function MetricsBar({ metrics, onRefresh }) {
-  if (!metrics) return null;
-  const cards = [
-    { label: "Paid users", value: metrics.paidTotal, icon: <Users size={14} /> },
-    { label: "Active Pro", value: metrics.activePro, icon: <BarChart3 size={14} /> },
-    {
-      label: "Active Family",
-      value: metrics.activeFamily,
-      icon: <BarChart3 size={14} />,
-    },
-    {
-      label: "MTD revenue",
-      value: `₹${metrics.monthRevenueRupees.toLocaleString("en-IN")}`,
-      icon: <IndianRupee size={14} />,
-    },
-    {
-      label: "MTD orders",
-      value: metrics.monthOrderCount,
-      icon: <IndianRupee size={14} />,
-    },
-    { label: "Admins", value: metrics.admins, icon: <ShieldCheck size={14} /> },
-  ];
-  return (
-    <div className={styles.metricsBar}>
-      {cards.map((c) => (
-        <div key={c.label} className={styles.metricCard}>
-          <div className={styles.metricLabel}>
-            {c.icon}
-            <span>{c.label}</span>
-          </div>
-          <div className={styles.metricValue}>{c.value}</div>
-        </div>
-      ))}
-      <button className={styles.refresh} onClick={onRefresh}>
-        <RefreshCcw size={13} />
-        Refresh
-      </button>
-    </div>
+/// Metrics view — 7 cards + a trend chart with day/week/month toggle.
+///
+/// Loads once when the tab is first opened. Cache lives up in
+/// AdminShell so switching tabs doesn't re-fetch. Refresh button
+/// clears + reloads. Changing granularity forces a reload because
+/// the trend buckets are computed server-side.
+function MetricsView({ authHeader, cache, setCache }) {
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+  const [granularity, setGranularity] = useState(
+    cache?.trend?.granularity ?? "week",
   );
-}
 
-function UsersTab({ authHeader, onChange }) {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
-  const [editing, setEditing] = useState(null);
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    const params = new URLSearchParams({ limit: "100" });
-    if (q) params.set("q", q);
-    const res = await fetch(`/api/admin-users?${params}`, {
-      headers: authHeader,
-    });
-    if (res.ok) {
-      const json = await res.json();
-      setUsers(json.users);
-    }
-    setLoading(false);
-  }, [authHeader, q]);
+  const load = useCallback(
+    async (gran = granularity) => {
+      setLoading(true);
+      setErr("");
+      try {
+        const res = await fetch(
+          `/api/admin-metrics?trendGranularity=${gran}`,
+          { headers: authHeader },
+        );
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body?.error ?? `HTTP ${res.status}`);
+        }
+        setCache(await res.json());
+      } catch (e) {
+        setErr(e instanceof Error ? e.message : String(e));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [authHeader, granularity, setCache],
+  );
 
   useEffect(() => {
-    const t = setTimeout(load, 200);
-    return () => clearTimeout(t);
-  }, [load]);
+    if (cache === null) load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function changeGranularity(g) {
+    setGranularity(g);
+    load(g);
+  }
+
+  if (loading && !cache) {
+    return <div className={styles.centerNote}>Loading metrics…</div>;
+  }
+  if (err && !cache) {
+    return (
+      <div className={styles.centerNote}>
+        <p style={{ color: "#f87171" }}>{err}</p>
+        <button className={styles.refresh} onClick={() => load()}>
+          Retry
+        </button>
+      </div>
+    );
+  }
+  if (!cache) return null;
+
+  const c = cache.cards;
+  const cards = [
+    { label: "Total Users", value: c.totalUsers },
+    { label: "Active Pro", value: c.activePro },
+    { label: "Active Family", value: c.activeFamily },
+    {
+      label: "MTD Revenue",
+      value: `₹${(c.mtdRevenueRupees ?? 0).toLocaleString("en-IN")}`,
+    },
+    { label: "MTD Orders", value: c.mtdOrders },
+    { label: "MAU", value: c.mau },
+    { label: "DAU", value: c.dau },
+  ];
 
   return (
     <>
       <div className={styles.filterRow}>
-        <div className={styles.searchWrap}>
+        <span className={styles.dim}>
+          Snapshot at{" "}
+          {new Date(cache.generatedAt).toLocaleTimeString("en-IN")}
+        </span>
+        <button
+          className={styles.refresh}
+          onClick={() => load()}
+          disabled={loading}
+        >
+          <RefreshCcw size={13} />
+          {loading ? "Refreshing…" : "Refresh"}
+        </button>
+      </div>
+
+      <div className={styles.metricsBar}>
+        {cards.map((card) => (
+          <div key={card.label} className={styles.metricCard}>
+            <div className={styles.metricLabel}>
+              <span>{card.label}</span>
+            </div>
+            <div className={styles.metricValue}>{card.value}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className={styles.chartCard}>
+        <div className={styles.chartHeader}>
+          <div>
+            <h3 className={styles.chartTitle}>New signups</h3>
+            <p className={styles.chartSub}>
+              Last 12 {granularity === "day" ? "days" : granularity + "s"}
+            </p>
+          </div>
+          <div className={styles.chartToggle}>
+            {["day", "week", "month"].map((g) => (
+              <button
+                key={g}
+                className={`${styles.chartTogglePill} ${
+                  granularity === g ? styles.chartTogglePillOn : ""
+                }`}
+                onClick={() => changeGranularity(g)}
+                disabled={loading}
+              >
+                {g}
+              </button>
+            ))}
+          </div>
+        </div>
+        <TrendChart buckets={cache.trend?.buckets ?? []} />
+      </div>
+    </>
+  );
+}
+
+/// Minimal SVG line chart — 100 lines, no external deps.
+///
+/// Draws a scaled line + dots for each bucket, with a hover overlay
+/// per bucket that shows the exact value. Grid + Y-axis labels are
+/// derived from a nice round max.
+function TrendChart({ buckets }) {
+  const [hover, setHover] = useState(null); // index | null
+
+  const width = 720;
+  const height = 200;
+  const padLeft = 36;
+  const padRight = 12;
+  const padTop = 16;
+  const padBottom = 28;
+  const plotW = width - padLeft - padRight;
+  const plotH = height - padTop - padBottom;
+
+  if (!buckets.length) {
+    return <div className={styles.chartEmpty}>No data.</div>;
+  }
+
+  const values = buckets.map((b) => b.count);
+  const rawMax = Math.max(...values, 1);
+  // Round the Y-max up to the next nice tick so labels look clean.
+  const niceMax = niceCeil(rawMax);
+  const stepX = buckets.length > 1 ? plotW / (buckets.length - 1) : 0;
+  const xOf = (i) => padLeft + i * stepX;
+  const yOf = (v) => padTop + plotH - (v / niceMax) * plotH;
+
+  const linePath = buckets
+    .map((b, i) => `${i === 0 ? "M" : "L"} ${xOf(i)} ${yOf(b.count)}`)
+    .join(" ");
+
+  // Show 3 gridlines including the max.
+  const gridSteps = [0, 0.5, 1];
+
+  return (
+    <div className={styles.chartWrap}>
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        className={styles.chartSvg}
+        preserveAspectRatio="none"
+      >
+        {/* Gridlines + Y-axis labels */}
+        {gridSteps.map((f) => {
+          const y = padTop + plotH * (1 - f);
+          const label = Math.round(niceMax * f);
+          return (
+            <g key={f}>
+              <line
+                x1={padLeft}
+                x2={width - padRight}
+                y1={y}
+                y2={y}
+                className={styles.chartGrid}
+              />
+              <text
+                x={padLeft - 6}
+                y={y + 3}
+                className={styles.chartAxis}
+                textAnchor="end"
+              >
+                {label}
+              </text>
+            </g>
+          );
+        })}
+
+        {/* Line */}
+        <path d={linePath} className={styles.chartLine} />
+
+        {/* Dots */}
+        {buckets.map((b, i) => (
+          <circle
+            key={i}
+            cx={xOf(i)}
+            cy={yOf(b.count)}
+            r={hover === i ? 5 : 3}
+            className={styles.chartDot}
+          />
+        ))}
+
+        {/* X-axis labels (every other tick if there are many) */}
+        {buckets.map((b, i) => {
+          const showLabel =
+            buckets.length <= 8 || i === 0 || i === buckets.length - 1 || i % 2 === 0;
+          if (!showLabel) return null;
+          return (
+            <text
+              key={i}
+              x={xOf(i)}
+              y={height - 8}
+              className={styles.chartAxis}
+              textAnchor="middle"
+            >
+              {b.label}
+            </text>
+          );
+        })}
+
+        {/* Hover overlay — invisible wide bars for hit-testing */}
+        {buckets.map((_, i) => (
+          <rect
+            key={i}
+            x={xOf(i) - stepX / 2}
+            y={0}
+            width={stepX || 20}
+            height={height}
+            fill="transparent"
+            onMouseEnter={() => setHover(i)}
+            onMouseLeave={() => setHover(null)}
+          />
+        ))}
+
+        {/* Tooltip */}
+        {hover !== null && (
+          <g pointerEvents="none">
+            <line
+              x1={xOf(hover)}
+              x2={xOf(hover)}
+              y1={padTop}
+              y2={padTop + plotH}
+              className={styles.chartHoverLine}
+            />
+            <rect
+              x={Math.min(width - 110, Math.max(padLeft, xOf(hover) - 40))}
+              y={padTop - 4}
+              width={90}
+              height={38}
+              rx={6}
+              className={styles.chartTooltipBg}
+            />
+            <text
+              x={Math.min(width - 65, Math.max(padLeft + 45, xOf(hover) + 5))}
+              y={padTop + 10}
+              className={styles.chartTooltipTitle}
+              textAnchor="middle"
+            >
+              {buckets[hover].label}
+            </text>
+            <text
+              x={Math.min(width - 65, Math.max(padLeft + 45, xOf(hover) + 5))}
+              y={padTop + 26}
+              className={styles.chartTooltipValue}
+              textAnchor="middle"
+            >
+              {buckets[hover].count} signup{buckets[hover].count === 1 ? "" : "s"}
+            </text>
+          </g>
+        )}
+      </svg>
+    </div>
+  );
+}
+
+function niceCeil(n) {
+  if (n <= 1) return 1;
+  const mag = Math.pow(10, Math.floor(Math.log10(n)));
+  const norm = n / mag;
+  const nice = norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10;
+  return nice * mag;
+}
+
+function UsersTab({ authHeader, cache, setCache, onWrite }) {
+  const [loading, setLoading] = useState(false);
+  const [q, setQ] = useState(cache?.q ?? "");
+  const [editing, setEditing] = useState(null);
+
+  const load = useCallback(
+    async (searchTerm = q) => {
+      setLoading(true);
+      const params = new URLSearchParams({ limit: "100" });
+      if (searchTerm) params.set("q", searchTerm);
+      const res = await fetch(`/api/admin-users?${params}`, {
+        headers: authHeader,
+      });
+      if (res.ok) {
+        const json = await res.json();
+        setCache({ users: json.users, q: searchTerm });
+      }
+      setLoading(false);
+    },
+    [authHeader, q, setCache],
+  );
+
+  useEffect(() => {
+    if (cache === null) load("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const users = cache?.users ?? [];
+
+  function onSearchSubmit(e) {
+    e.preventDefault();
+    load(q);
+  }
+
+  return (
+    <>
+      <div className={styles.filterRow}>
+        <form onSubmit={onSearchSubmit} className={styles.searchWrap}>
           <Search size={14} />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search email or name…"
+            placeholder="Search email or name — press Enter"
             className={styles.searchInput}
           />
-        </div>
-        <button className={styles.refresh} onClick={load}>
+          <button type="submit" className={styles.searchGo}>
+            Go
+          </button>
+        </form>
+        <button className={styles.refresh} onClick={() => load(q)} disabled={loading}>
           <RefreshCcw size={13} />
-          Refresh
+          {loading ? "Loading…" : "Refresh"}
         </button>
       </div>
 
@@ -463,8 +765,8 @@ function UsersTab({ authHeader, onChange }) {
           onClose={() => setEditing(null)}
           onSaved={() => {
             setEditing(null);
-            load();
-            onChange();
+            load(q);
+            onWrite();
           }}
         />
       )}
@@ -575,28 +877,41 @@ function SetTierModal({ user, authHeader, onClose, onSaved }) {
   );
 }
 
-function PaymentsTab({ authHeader, onChange }) {
-  const [status, setStatus] = useState("all");
-  const [payments, setPayments] = useState([]);
-  const [loading, setLoading] = useState(true);
+function PaymentsTab({ authHeader, cache, setCache, onWrite }) {
+  const [status, setStatus] = useState(cache?.status ?? "all");
+  const [loading, setLoading] = useState(false);
   const [refunding, setRefunding] = useState(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    const res = await fetch(
-      `/api/admin-payments?status=${status}&limit=100`,
-      { headers: authHeader },
-    );
-    if (res.ok) {
-      const json = await res.json();
-      setPayments(json.payments);
-    }
-    setLoading(false);
-  }, [authHeader, status]);
+  const load = useCallback(
+    async (s = status) => {
+      setLoading(true);
+      const res = await fetch(
+        `/api/admin-payments?status=${s}&limit=100`,
+        { headers: authHeader },
+      );
+      if (res.ok) {
+        const json = await res.json();
+        setCache({ payments: json.payments, status: s });
+      }
+      setLoading(false);
+    },
+    [authHeader, status, setCache],
+  );
 
   useEffect(() => {
-    load();
-  }, [load]);
+    if (cache === null) load(status);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const payments = cache?.payments ?? [];
+
+  // Status filter change → refetch with the new filter. This is
+  // still an explicit user action (clicking a pill), which fits the
+  // "no queries on random UI moves" rule.
+  function pickStatus(s) {
+    setStatus(s);
+    load(s);
+  }
 
   function downloadCsv() {
     // The CSV endpoint requires the same bearer token; a plain <a>
@@ -629,16 +944,21 @@ function PaymentsTab({ authHeader, onChange }) {
               className={`${styles.filterPill} ${
                 status === s ? styles.filterPillOn : ""
               }`}
-              onClick={() => setStatus(s)}
+              onClick={() => pickStatus(s)}
+              disabled={loading}
             >
               {s}
             </button>
           ))}
         </div>
         <div className={styles.filterRowRight}>
-          <button className={styles.refresh} onClick={load}>
+          <button
+            className={styles.refresh}
+            onClick={() => load(status)}
+            disabled={loading}
+          >
             <RefreshCcw size={13} />
-            Refresh
+            {loading ? "Loading…" : "Refresh"}
           </button>
           <button className={styles.refresh} onClick={downloadCsv}>
             <Download size={13} />
@@ -723,8 +1043,8 @@ function PaymentsTab({ authHeader, onChange }) {
           onClose={() => setRefunding(null)}
           onDone={() => {
             setRefunding(null);
-            load();
-            onChange();
+            load(status);
+            onWrite();
           }}
         />
       )}
@@ -795,9 +1115,8 @@ function RefundModal({ payment, authHeader, onClose, onDone }) {
   );
 }
 
-function ActivityTab({ authHeader }) {
-  const [entries, setEntries] = useState([]);
-  const [loading, setLoading] = useState(true);
+function ActivityTab({ authHeader, cache, setCache }) {
+  const [loading, setLoading] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -806,14 +1125,17 @@ function ActivityTab({ authHeader }) {
     });
     if (res.ok) {
       const json = await res.json();
-      setEntries(json.entries);
+      setCache({ entries: json.entries });
     }
     setLoading(false);
-  }, [authHeader]);
+  }, [authHeader, setCache]);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    if (cache === null) load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const entries = cache?.entries ?? [];
 
   return (
     <>
@@ -821,9 +1143,9 @@ function ActivityTab({ authHeader }) {
         <span className={styles.dim}>
           Last {entries.length} entries · newest first
         </span>
-        <button className={styles.refresh} onClick={load}>
+        <button className={styles.refresh} onClick={load} disabled={loading}>
           <RefreshCcw size={13} />
-          Refresh
+          {loading ? "Loading…" : "Refresh"}
         </button>
       </div>
 
@@ -881,9 +1203,8 @@ function ActivityTab({ authHeader }) {
   );
 }
 
-function MissionsTab({ authHeader }) {
-  const [missions, setMissions] = useState([]);
-  const [loading, setLoading] = useState(true);
+function MissionsTab({ authHeader, cache, setCache, onWrite }) {
+  const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(null); // null | mission | 'new'
   const [busyDelete, setBusyDelete] = useState(null);
 
@@ -894,14 +1215,17 @@ function MissionsTab({ authHeader }) {
     });
     if (res.ok) {
       const json = await res.json();
-      setMissions(json.missions);
+      setCache({ missions: json.missions });
     }
     setLoading(false);
-  }, [authHeader]);
+  }, [authHeader, setCache]);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    if (cache === null) load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const missions = cache?.missions ?? [];
 
   async function del(id) {
     if (!confirm(`Delete mission "${id}"? This cannot be undone.`)) return;
@@ -918,6 +1242,7 @@ function MissionsTab({ authHeader }) {
       return;
     }
     load();
+    onWrite();
   }
 
   return (
@@ -927,9 +1252,9 @@ function MissionsTab({ authHeader }) {
           {missions.length} mission{missions.length === 1 ? "" : "s"} in the catalog · higher display_order sorts first on Home
         </span>
         <div className={styles.filterRowRight}>
-          <button className={styles.refresh} onClick={load}>
+          <button className={styles.refresh} onClick={load} disabled={loading}>
             <RefreshCcw size={13} />
-            Refresh
+            {loading ? "Loading…" : "Refresh"}
           </button>
           <button
             className={styles.rowAction}
@@ -1054,6 +1379,7 @@ function MissionsTab({ authHeader }) {
           onSaved={() => {
             setEditing(null);
             load();
+            onWrite();
           }}
         />
       )}

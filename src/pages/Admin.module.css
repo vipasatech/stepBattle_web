@@ -834,3 +834,173 @@
   transition: background 120ms;
 }
 .posterUpload:hover { background: rgba(147, 51, 234, 0.25); }
+
+/* ---------- Empty state (no tab picked) ---------- */
+
+.emptyPrompt {
+  padding: 60px 20px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.75);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+}
+
+.emptyPrompt p {
+  margin: 0 0 6px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.centerNote {
+  padding: 40px 20px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.65);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+/* ---------- Search "Go" button ---------- */
+
+.searchGo {
+  padding: 5px 12px;
+  background: #9333ea;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+}
+
+/* ---------- Trend chart ---------- */
+
+.chartCard {
+  margin-top: 16px;
+  padding: 20px 22px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+}
+
+.chartHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.chartTitle {
+  font-size: 15px;
+  font-weight: 800;
+  color: white;
+  margin: 0;
+}
+
+.chartSub {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 2px 0 0;
+}
+
+.chartToggle {
+  display: inline-flex;
+  gap: 4px;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+}
+
+.chartTogglePill {
+  padding: 5px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: background 120ms, color 120ms;
+}
+
+.chartTogglePillOn {
+  background: #9333ea;
+  color: white;
+}
+
+.chartTogglePill:disabled { opacity: 0.5; cursor: default; }
+
+.chartWrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.chartSvg {
+  width: 100%;
+  height: auto;
+  min-height: 200px;
+  display: block;
+}
+
+.chartGrid {
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.chartAxis {
+  fill: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+  font-family: inherit;
+}
+
+.chartLine {
+  fill: none;
+  stroke: #c084fc;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chartDot {
+  fill: #c084fc;
+  transition: r 120ms ease;
+}
+
+.chartHoverLine {
+  stroke: rgba(192, 132, 252, 0.35);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+}
+
+.chartTooltipBg {
+  fill: rgba(18, 8, 29, 0.95);
+  stroke: rgba(147, 51, 234, 0.4);
+  stroke-width: 1;
+}
+
+.chartTooltipTitle {
+  fill: rgba(255, 255, 255, 0.6);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.chartTooltipValue {
+  fill: white;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.chartEmpty {
+  padding: 40px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+  font-size: 13px;
+}
