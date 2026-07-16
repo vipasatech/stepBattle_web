@@ -48,11 +48,33 @@
 }
 
 .desktopLinks a {
-  transition: 0.3s;
+  position: relative;
+  padding: 6px 0;
+  transition: color 0.2s;
+  text-decoration: none;
+  color: inherit;
 }
 
 .desktopLinks a:hover {
   color: #bb86fc;
+}
+
+/* Active tab — small underline pill under the label. Present on
+   both desktop and mobile-drawer links via .active. */
+.desktopLinks a.active,
+.mobileDrawer a.active {
+  color: #c084fc;
+}
+
+.desktopLinks a.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: linear-gradient(90deg, #9333ea, #c084fc);
+  border-radius: 2px;
 }
 
 .desktopButton {
