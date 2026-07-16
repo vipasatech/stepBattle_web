@@ -47,7 +47,7 @@ export default async function handler(req, res) {
   // (saves the user from retyping info the app already knows).
   const { data: profileRow, error: profileErr } = await sb
     .from("profiles")
-    .select("id, email, phone, display_name, preferred_name")
+    .select("id, email, display_name, preferred_name")
     .eq("id", uid)
     .maybeSingle();
   if (profileErr) {
@@ -111,7 +111,7 @@ export default async function handler(req, res) {
     user: {
       name: profileRow.preferred_name ?? profileRow.display_name ?? "",
       email: profileRow.email ?? "",
-      contact: profileRow.phone ?? "",
+      contact: "",
     },
   });
 }
