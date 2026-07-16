@@ -42,10 +42,12 @@ export default async function handler(req, res) {
   const sb = supabaseAdmin();
 
   // Sanity: uid must exist in profiles. Prevents a random client
-  // creating orders for user ids that don't exist.
+  // creating orders for user ids that don't exist. Also pull the
+  // user's email + display name so the checkout modal can prefill
+  // (saves the user from retyping info the app already knows).
   const { data: profileRow, error: profileErr } = await sb
     .from("profiles")
-    .select("id")
+    .select("id, email, phone, display_name, preferred_name")
     .eq("id", uid)
     .maybeSingle();
   if (profileErr) {
@@ -106,5 +108,10 @@ export default async function handler(req, res) {
     keyId,
     amount: order.amount,
     currency: order.currency,
+    user: {
+      name: profileRow.preferred_name ?? profileRow.display_name ?? "",
+      email: profileRow.email ?? "",
+      contact: profileRow.phone ?? "",
+    },
   });
 }

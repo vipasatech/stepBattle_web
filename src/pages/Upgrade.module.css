@@ -35,6 +35,61 @@
   margin: 0 0 12px;
 }
 
+.toggle {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  margin: 16px 0 20px;
+}
+
+.togglePill {
+  flex: 1;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 180ms ease;
+}
+
+.togglePillOn {
+  background: #9333ea;
+}
+
+.togglePillLabel {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  transition: color 180ms ease;
+}
+
+.togglePillOn .togglePillLabel {
+  color: white;
+}
+
+.toggleBadge {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(251, 191, 36, 0.22);
+  color: #fbbf24;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  line-height: 1;
+}
+
+.toggleBadgeOn {
+  background: rgba(255, 255, 255, 0.22);
+  color: white;
+}
+
 .priceRow {
   display: flex;
   align-items: baseline;

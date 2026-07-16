@@ -10,12 +10,15 @@ import styles from "./Upgrade.module.css";
 /// params:
 ///   * `uid`    — the user's Supabase user id (attached by the app)
 ///   * `plan`   — "pro" | "family"
-///   * `period` — "monthly" | "yearly"
+///   * `period` — "monthly" | "yearly" (optional; overridable via
+///                the toggle on the page itself)
 ///
 /// Flow:
 ///   1. Validate params. Missing / bad → error state, no checkout.
-///   2. Show a summary card of the chosen plan + price.
-///   3. On "Pay" tap → POST /api/create-order with (uid, plan, period).
+///   2. Show a summary card of the chosen plan + a Monthly/Yearly
+///      toggle. Price updates reactively.
+///   3. On "Pay" tap → POST /api/create-order with (uid, plan,
+///      selected period).
 ///   4. Server returns a Razorpay order id → open Razorpay Checkout.
 ///   5. Razorpay redirects the user to /upgrade/success or /failed
 ///      based on the outcome. The webhook (separate endpoint) does
@@ -26,7 +29,15 @@ export default function Upgrade() {
 
   const uid = params.get("uid") ?? "";
   const planKey = params.get("plan") ?? "";
-  const period = params.get("period") ?? "monthly";
+
+  // Initial period from URL (respects mobile-app pre-selection);
+  // defaults to yearly since it's the better deal. Once on the
+  // page, the toggle owns the state — the URL param is only used
+  // as a first-render hint.
+  const urlPeriod = params.get("period");
+  const initialPeriod =
+    urlPeriod === "monthly" ? "monthly" : "yearly";
+  const [period, setPeriod] = useState(initialPeriod);
 
   const plan = PLANS[planKey];
   const price = useMemo(() => {
@@ -46,8 +57,7 @@ export default function Upgrade() {
     document.body.appendChild(script);
   }, []);
 
-  const invalidParams =
-    !uid || !plan || !["monthly", "yearly"].includes(period);
+  const invalidParams = !uid || !plan;
 
   async function startPayment() {
     if (invalidParams) return;
@@ -62,7 +72,7 @@ export default function Upgrade() {
         const body = await res.json().catch(() => ({}));
         throw new Error(body?.error ?? `HTTP ${res.status}`);
       }
-      const { orderId, keyId, amount, currency } = await res.json();
+      const { orderId, keyId, amount, currency, user } = await res.json();
       if (!window.Razorpay) {
         throw new Error("Razorpay Checkout script failed to load.");
       }
@@ -72,10 +82,21 @@ export default function Upgrade() {
         amount,
         currency,
         name: "StepBattle",
+        // Logo shown on the left panel of the Razorpay modal.
+        // Serving from the same origin so no CORS shenanigans.
+        image: "https://www.stepbattle.fit/logo.png",
         description: `${plan.name} · ${
-          period === "yearly" ? "Yearly" : "Monthly"
+          period === "yearly" ? "Yearly plan" : "Monthly plan"
         }`,
         theme: { color: "#9333ea" },
+        // Skips the "Enter phone / email" step in the modal if we
+        // already know these from the mobile app's profile row.
+        // Empty strings are fine — Razorpay just prompts as usual.
+        prefill: {
+          name: user?.name ?? "",
+          email: user?.email ?? "",
+          contact: user?.contact ?? "",
+        },
         notes: { uid, plan: planKey, period },
         handler: () => {
           // Razorpay resolves the modal on payment. The webhook is
@@ -118,6 +139,15 @@ export default function Upgrade() {
     );
   }
 
+  // Precompute the yearly discount percentage so both the toggle
+  // badge and the "save %" line agree without duplicating the math.
+  const savingsPercent =
+    plan.monthlyRupees > 0
+      ? Math.round(
+          100 - (plan.yearlyRupees / (plan.monthlyRupees * 12)) * 100,
+        )
+      : 0;
+
   return (
     <main className={styles.page}>
       <motion.div
@@ -128,6 +158,13 @@ export default function Upgrade() {
       >
         <p className={styles.tag}>SECURE CHECKOUT</p>
         <h1 className={styles.title}>{plan.name}</h1>
+
+        <BillingToggle
+          period={period}
+          onChange={setPeriod}
+          yearlySavePercent={savingsPercent}
+        />
+
         <div className={styles.priceRow}>
           <span className={styles.price}>₹{price}</span>
           <span className={styles.period}>
@@ -137,10 +174,7 @@ export default function Upgrade() {
         {period === "yearly" && plan.monthlyRupees && (
           <p className={styles.saving}>
             ~₹{Math.round(plan.yearlyRupees / 12)}/mo · save{" "}
-            {Math.round(
-              100 - (plan.yearlyRupees / (plan.monthlyRupees * 12)) * 100,
-            )}
-            % vs monthly
+            {savingsPercent}% vs monthly
           </p>
         )}
 
@@ -181,5 +215,42 @@ export default function Upgrade() {
         </div>
       </motion.div>
     </main>
+  );
+}
+
+/// Two-pill Monthly / Yearly switcher. Mirrors the mobile app's
+/// UpgradeCTASheet toggle exactly so the two surfaces share a
+/// language. Yearly pill carries a "Save N%" badge.
+function BillingToggle({ period, onChange, yearlySavePercent }) {
+  return (
+    <div className={styles.toggle}>
+      <button
+        type="button"
+        className={`${styles.togglePill} ${
+          period === "monthly" ? styles.togglePillOn : ""
+        }`}
+        onClick={() => onChange("monthly")}
+      >
+        <span className={styles.togglePillLabel}>Monthly</span>
+      </button>
+      <button
+        type="button"
+        className={`${styles.togglePill} ${
+          period === "yearly" ? styles.togglePillOn : ""
+        }`}
+        onClick={() => onChange("yearly")}
+      >
+        <span className={styles.togglePillLabel}>Yearly</span>
+        {yearlySavePercent > 0 && (
+          <span
+            className={`${styles.toggleBadge} ${
+              period === "yearly" ? styles.toggleBadgeOn : ""
+            }`}
+          >
+            Save {yearlySavePercent}%
+          </span>
+        )}
+      </button>
+    </div>
   );
 }
