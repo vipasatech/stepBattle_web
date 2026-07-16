@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# Env files — never commit real secrets. `.env.example` is committed.
+.env
+.env.local
+.env.production
+.env.development
+.vercel
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
