@@ -10,7 +10,7 @@ import styles from "./Plans.module.css";
 /// mobile app via `stepbattle://upgrade?plan=X` because the actual
 /// purchase always happens inside the authenticated app context.
 export default function Plans() {
-  const [period, setPeriod] = useState("monthly");
+  const [period, setPeriod] = useState("yearly");
 
   return (
     <section id="plans" className={styles.section}>

@@ -16,7 +16,7 @@ import styles from "./Pricing.module.css";
 /// installed, the browser silently keeps the current URL and
 /// the fallback text below the button suggests downloading.
 export default function Pricing() {
-  const [period, setPeriod] = useState("monthly");
+  const [period, setPeriod] = useState("yearly");
 
   return (
     <main className={styles.page}>
