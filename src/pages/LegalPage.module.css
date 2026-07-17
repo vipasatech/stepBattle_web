@@ -1,0 +1,80 @@
+.page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(128, 0, 255, 0.16), transparent 40%),
+    #07010f;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 40px 24px 80px;
+}
+
+.back {
+  display: inline-block;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  font-size: 13px;
+  margin-bottom: 24px;
+  transition: color 120ms;
+}
+.back:hover { color: #c084fc; }
+
+.article {
+  max-width: 720px;
+  margin: 0 auto;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+.article h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 40px;
+  font-weight: 800;
+  margin: 0 0 6px;
+  color: white;
+  letter-spacing: -0.5px;
+}
+
+.meta {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
+  margin: 0 0 32px;
+}
+
+.article h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  margin: 32px 0 10px;
+}
+
+.article p {
+  margin: 0 0 14px;
+}
+
+.article ul {
+  margin: 0 0 14px;
+  padding-left: 22px;
+}
+
+.article li {
+  margin-bottom: 8px;
+}
+
+.article a {
+  color: #c084fc;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(192, 132, 252, 0.35);
+  transition: border-color 120ms;
+}
+.article a:hover { border-color: #c084fc; }
+
+.article strong {
+  color: white;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .article h1 { font-size: 30px; }
+  .article h2 { font-size: 17px; }
+  .article { font-size: 14.5px; }
+}

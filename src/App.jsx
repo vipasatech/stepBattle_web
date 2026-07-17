@@ -6,6 +6,8 @@ import UpgradeSuccess from "./pages/UpgradeSuccess";
 import UpgradeFailed from "./pages/UpgradeFailed";
 import Pricing from "./pages/Pricing";
 import Admin from "./pages/Admin";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
             Not a security boundary — the real gate is the is_admin
             flag checked server-side on every /api/admin-* call. */}
         <Route path="/admin-vp9421" element={<Admin />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
