@@ -103,7 +103,7 @@ export default function Privacy() {
           StepBattle is not directed at children under 13. If we learn
           we've collected data from a child under 13 we will delete
           it. Contact{" "}
-          <a href="mailto:life@ultramind.app">life@ultramind.app</a>{" "}
+          <a href="mailto:contact@stepbattle.fit">contact@stepbattle.fit</a>{" "}
           if you believe your child has created an account.
         </p>
 
@@ -117,7 +117,7 @@ export default function Privacy() {
         <h2>7. Contact</h2>
         <p>
           Questions or requests:{" "}
-          <a href="mailto:life@ultramind.app">life@ultramind.app</a>
+          <a href="mailto:contact@stepbattle.fit">contact@stepbattle.fit</a>
         </p>
       </article>
     </main>

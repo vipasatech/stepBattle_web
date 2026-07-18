@@ -34,7 +34,7 @@ export default function Terms() {
         <p>
           You are responsible for the security of your account and for
           all activity that occurs under it. Notify us immediately at{" "}
-          <a href="mailto:life@ultramind.app">life@ultramind.app</a> if
+          <a href="mailto:contact@stepbattle.fit">contact@stepbattle.fit</a> if
           you suspect unauthorised access.
         </p>
 
@@ -44,7 +44,7 @@ export default function Terms() {
           Razorpay. Prices are shown in Indian Rupees (INR).
           Subscriptions renew only when you initiate the next payment
           — StepBattle does not auto-charge cards on file. See our
-          <a href="mailto:life@ultramind.app"> Refund Policy</a> for
+          <a href="mailto:contact@stepbattle.fit"> Refund Policy</a> for
           refund eligibility.
         </p>
 
@@ -80,7 +80,7 @@ export default function Terms() {
         <h2>8. Contact</h2>
         <p>
           Questions about these Terms:{" "}
-          <a href="mailto:life@ultramind.app">life@ultramind.app</a>
+          <a href="mailto:contact@stepbattle.fit">contact@stepbattle.fit</a>
         </p>
       </article>
     </main>
