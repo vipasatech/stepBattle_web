@@ -17,10 +17,10 @@ export const FEATURE_ROWS = [
 export const PRICING_TIERS = [
   {
     key: "basic",
-    name: "Basic",
-    subtitle: "Free forever",
+    name: "Free",
+    subtitle: "Get started with StepBattle",
     priceRupees: 0,
-    accent: "#22c55e",
+    accent: "#8b3dff",
     values: [
       "15",
       "5",
@@ -30,16 +30,16 @@ export const PRICING_TIERS = [
       "200 XP",
     ],
     cta: {
-      label: "Included with the app",
+      label: "Start Free",
       // No paywall — Basic is what every account starts on.
       // The button just points to the app landing.
-      href: "/",
+      href: "https://play.google.com/store/apps/details?id=com.stepbattle.stepbattle&hl=en_IN",
       variant: "ghost",
     },
   },
   {
     key: "pro",
-    name: "Pro Pass",
+    name: "Pro",
     subtitle: "For serious solo walkers",
     priceRupees: 149,
     yearlyRupees: 1499,
@@ -55,14 +55,14 @@ export const PRICING_TIERS = [
     ],
     cta: {
       label: "Get Pro",
-      href: "stepbattle://upgrade?plan=pro",
+      href: "https://play.google.com/store/apps/details?id=com.stepbattle.stepbattle&hl=en_IN",
       variant: "primary",
     },
   },
   {
     key: "family",
-    name: "Family Pass",
-    subtitle: "Share with up to 4 accounts",
+    name: "Pro Plus",
+    subtitle: "More room to compete",
     priceRupees: 299,
     yearlyRupees: 2999,
     accent: "#a855f7",
@@ -75,8 +75,8 @@ export const PRICING_TIERS = [
       "1000 XP · each",
     ],
     cta: {
-      label: "Get Family",
-      href: "stepbattle://upgrade?plan=family",
+      label: "Get Pro Plus",
+      href: "https://play.google.com/store/apps/details?id=com.stepbattle.stepbattle&hl=en_IN",
       variant: "primary",
     },
   },

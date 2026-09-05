@@ -1,0 +1,1 @@
+.hero::before{background:linear-gradient(135deg,#fbfaff 0%,#f4efff 55%,#faf9ff 100%)!important}.page[data-theme="light"] .hero{color:#21172b}.page[data-theme="light"] .heroCopy>small{color:#5f5968}.page[data-theme="dark"] .hero::before{background:radial-gradient(circle at 78% 40%,rgba(139,61,255,.18),transparent 34%),#090b09!important}.hero{background:transparent!important}
